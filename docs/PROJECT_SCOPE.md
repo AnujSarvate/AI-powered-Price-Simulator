@@ -163,3 +163,107 @@ AI-powered-Price-Simulator/
 
 ## 8. Tiered delivery plan
 
+### Phase 0 — Foundation (week 1–2)
+
+- Repo setup, CI, README architecture section.
+- Domain models: `Product`, `Scenario`, `SimulationResult`.
+- Pure-function simulation module + golden tests (no UI).
+
+**Exit criteria:** `pytest`/`npm test` green; CLI or script runs one scenario and prints weekly profit.
+
+### Phase 1 — MVP (week 3–5)
+
+- REST API for products and run simulation.
+- React dashboard: edit product, run, line charts.
+- SQLite persistence.
+
+**Exit criteria:** Demo video path: create product → run 12 weeks → see chart.
+
+### Phase 2 — AI layer (week 6–7)
+
+- Synthetic data generator with known ground truth.
+- Train demand regressor; expose metrics and “suggested Q₀.”
+- Optimizer endpoint + UI “Apply recommendation” button.
+
+**Exit criteria:** Report subsection: model metrics, feature list, limitation (correlation ≠ causation).
+
+### Phase 3 — Polish & presentation (week 8+)
+
+- Scenario compare, export, uncertainty mode (if time).
+- Written report: problem, design, evaluation, ethics (pricing fairness note).
+- Optional deployment (Render, Fly.io, or class server).
+
+---
+
+## 9. AI design (be explicit for grading)
+
+### 9.1 What is “AI” in this project?
+
+1. **Demand forecasting (required)**  
+   Features example: price, day-of-week, category one-hot, promo flag, lagged sales.  
+   Model: Ridge regression or Random Forest Regressor.  
+   Output: predicted units; compare to elasticity-only baseline in evaluation table.
+
+2. **Price recommendation (required)**  
+   Not necessarily neural: constrained search over price grid using simulation or closed-form where valid.  
+   Label as **optimization**; optional ML can predict ε from product text embeddings (stretch).
+
+3. **LLM explanations (optional)**  
+   Input: JSON `{ weeks, prices, profits, elasticity }`.  
+   Output: narrative only; numbers must be copied from input.  
+   Mitigate hallucination: template + “do not invent metrics.”
+
+### 9.2 Evaluation metrics (include in final report)
+
+- Simulation: sanity checks (ε ↑ → optimal price behavior monotonicity tests).
+- ML: MAE, RMSE, R² on holdout; baseline comparison (mean predictor, elasticity-only).
+- Optimizer: known analytic case for constant ε and no constraints.
+
+### 9.3 Ethics & limitations (short section)
+
+- Simulations are not financial advice.
+- Dynamic pricing can harm vulnerable customers; discuss transparency and caps (max surge %).
+
+---
+
+## 10. Sample scenarios (demo script)
+
+1. **Coffee shop mug** — Cost $4, price $12, ε = 1.2 → show optimal price near $8–$10 depending on Q₀.
+2. **Promo week** — 20% off for weeks 4–5; show volume spike and margin tradeoff.
+3. **Competitor undercut** — Rule triggers match; profit compresses unless ε is low.
+4. **ML vs. formula** — Same product; show when ML correction helps vs. overfits on tiny data.
+
+---
+
+## 11. Roles (team of 4)
+
+| Role | Ownership |
+|------|-----------|
+| Simulation & optimizer | Core math, tests, performance |
+| Backend & data | API, DB, CSV pipeline, ML training endpoint |
+| Frontend | UI, charts, scenario UX |
+| Integration & QA | CI, E2E smoke test, report diagrams, demo script |
+
+Solo: implement MVP path only; use Phase 2 ML as minimal regression + one chart.
+
+---
+
+## 12. Definition of done
+
+- [ ] All MVP requirements in §5.1 implemented and demoable.
+- [ ] ≥ 15 unit tests covering simulation and optimizer.
+- [ ] Architecture and setup documented in README.
+- [ ] Final report: 8–12 pages with evaluation table and future work.
+- [ ] One recorded demo (3–5 min) walking through a pricing decision.
+
+---
+
+## 13. Future extensions (post-course)
+
+- Live price feeds, A/B test module, multi-store inventory, federated learning on anonymized sales (research angle).
+
+---
+
+## 14. One-line thesis statement (for proposal cover)
+
+*We build an transparent economic simulator for pricing decisions, augmented by machine-learned demand forecasts and constrained optimization, so users can explore profit tradeoffs before changing real prices.*
