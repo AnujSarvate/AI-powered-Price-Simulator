@@ -328,3 +328,70 @@ flowchart LR
   repo[repositories]
 
   api --> svc
+  svc --> sim
+  svc --> opt
+  svc --> ml
+  svc --> repo
+  opt --> sim
+  ml --> sim
+```
+
+**Rule:** `core.*` must not import from `api` or `repositories` (hexagonal / ports-adapters).
+
+---
+
+## 13. Test matrix (minimum)
+
+| Layer | Cases |
+|-------|--------|
+| `demand_qty` | ε→0+ limit, promo multiplier, seasonality boundary weeks |
+| `optimizer` | matches closed form; binding `p_min`; dynamic Δ_max path |
+| `simulation` | golden JSON for 3 fixtures; inventory depletion |
+| `monte_carlo` | fixed seed → fixed p50 |
+| API | CRUD products; simulate 400 on bad ε |
+| ML | synthetic data with known coefficients → R² > 0.95 |
+
+Target: **≥ 80% line coverage** on `core/` and `ml/` packages.
+
+---
+
+## 14. Deployment topology
+
+```
+Internet -> Caddy/NGINX (TLS)
+         -> web static (S3 or nginx)
+         -> api:8000 (uvicorn workers=2)
+         -> postgres:5432
+         -> volume /models for joblib artifacts
+```
+
+Environment variables: `DATABASE_URL`, `JWT_SECRET`, `LLM_API_KEY` (optional), `CORS_ORIGINS`.
+
+---
+
+## 15. Versioning and compatibility
+
+- API version in path `/v1`; breaking changes → `/v2`.
+- `market_config` JSON includes `"schema_version": 1`; migrations upgrade on read.
+- Simulation results include `engine_version` string for reproducibility audits.
+
+---
+
+## 16. Open questions
+
+1. Inventory replenishment lead time in v1 or v2?
+2. JWT multi-user vs single shared demo tenant for class submission?
+3. Export format: Parquet for large Monte Carlo outputs?
+
+---
+
+## Appendix A — Reference implementation order
+
+1. `core/demand.py`, `core/simulation.py` + tests  
+2. `core/optimizer.py` + tests  
+3. `repositories` + Alembic  
+4. FastAPI routes simulate/optimize  
+5. ML pipeline + train endpoint  
+6. React scenario editor + charts  
+7. CI + Docker Compose  
+8. Optional LLM explain route  
