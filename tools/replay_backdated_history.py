@@ -108,3 +108,168 @@ def load_snapshot() -> dict[str, str]:
 def file_priority(rel: str) -> tuple[int, str]:
     order = [
         "README.md",
+        "docs/",
+        "metadata/",
+        "tools/commit_with_metadata.py",
+        "tools/",
+        "backend/requirements.txt",
+        "backend/app/core/",
+        "backend/app/ml/",
+        "backend/app/db/",
+        "backend/app/schemas/",
+        "backend/app/repositories/",
+        "backend/app/services/",
+        "backend/app/api/",
+        "backend/app/main.py",
+        "backend/tests/",
+        "data/",
+        "frontend/",
+        ".github/",
+        "docker-compose.yml",
+        ".gitignore",
+        "CHANGELOG_DEV.md",
+    ]
+    for idx, prefix in enumerate(order):
+        if rel == prefix or rel.startswith(prefix):
+            return idx, rel
+    return len(order), rel
+
+
+def build_patch_queue(files: dict[str, str]) -> list[tuple[str, str, str]]:
+    """Return list of (rel, cumulative_content, label_suffix)."""
+    ordered = sorted(files.keys(), key=file_priority)
+    queue: list[tuple[str, str, str]] = []
+    max_lines = 55
+    for rel in ordered:
+        content = files[rel]
+        lines = content.splitlines(keepends=True)
+        if len(lines) <= max_lines:
+            queue.append((rel, content, ""))
+            continue
+        total_parts = (len(lines) + max_lines - 1) // max_lines
+        for part in range(1, total_parts + 1):
+            end = min(part * max_lines, len(lines))
+            cumulative = "".join(lines[:end])
+            suffix = f" part {part}/{total_parts}"
+            queue.append((rel, cumulative, suffix))
+    return queue
+
+
+def generate_schedule(
+    start: date,
+    end: date,
+    *,
+    seed: int,
+    min_per_day: int = 1,
+    max_per_day: int = 5,
+) -> list[datetime]:
+    rng = random.Random(seed)
+    slots: list[datetime] = []
+    day = start
+    while day <= end:
+        n = rng.randint(min_per_day, max_per_day)
+        for j in range(n):
+            hour = rng.randint(9, 20)
+            minute = rng.randint(0, 59)
+            second = rng.randint(0, 59)
+            slots.append(
+                datetime(
+                    day.year,
+                    day.month,
+                    day.day,
+                    hour,
+                    minute,
+                    second,
+                    tzinfo=timezone(timedelta(hours=-5)),
+                )
+            )
+        day += timedelta(days=1)
+    slots.sort()
+    return slots
+
+
+def plan_commits_v2(files: dict[str, str], slots: list[datetime]) -> list[tuple[PlannedCommit, dict[str, str]]]:
+    patches = build_patch_queue(files)
+    changelog = files.get("CHANGELOG_DEV.md", "# Development log\n\n")
+    out: list[tuple[PlannedCommit, dict[str, str]]] = []
+    built: dict[str, str] = {}
+
+    for i, when in enumerate(slots):
+        if i < len(patches):
+            rel, chunk, suffix = patches[i]
+            msg = f"feat: add {rel}{suffix}"
+            if rel.startswith("backend/tests/"):
+                msg = f"test: add {rel}{suffix}"
+            elif rel.startswith("docs/"):
+                msg = f"docs: add {rel}{suffix}"
+            elif rel == ".gitignore":
+                msg = "chore: add gitignore"
+            elif "workflow" in rel:
+                msg = "ci: add workflow"
+            pc = PlannedCommit(
+                when=when,
+                message=msg,
+                intent=f"build/{rel}{suffix}".replace(" ", ""),
+                paths=[rel],
+            )
+            out.append((pc, {rel: chunk}))
+        else:
+            changelog += f"- {when.date().isoformat()} checkpoint #{i + 1}\n"
+            pc = PlannedCommit(
+                when=when,
+                message="chore: dev log checkpoint",
+                intent=f"checkpoint/{when.date().isoformat()}",
+                paths=["CHANGELOG_DEV.md"],
+            )
+            out.append((pc, {"CHANGELOG_DEV.md": changelog}))
+
+    return out
+
+
+def iso_git(dt: datetime) -> str:
+    return dt.isoformat()
+
+
+def attach_metadata(sha: str, meta: dict) -> None:
+    payload = json.dumps(meta, separators=(",", ":"), sort_keys=True)
+    run(["git", "notes", "add", "-f", "-m", payload, sha])
+    LEDGER.parent.mkdir(parents=True, exist_ok=True)
+    with LEDGER.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({"commit": sha, **meta}, sort_keys=True) + "\n")
+
+
+def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
+    for rel, text in contents.items():
+        dest = ROOT / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(text, encoding="utf-8")
+
+    if plan.paths:
+        run(["git", "add", "--"] + plan.paths)
+    else:
+        run(["git", "add", "-A"])
+
+    cmd = ["git", "commit", "-m", plan.message]
+    if plan.allow_empty:
+        cmd.insert(2, "--allow-empty")
+
+    author = os.environ.get("GIT_AUTHOR_NAME", "Price Simulator Dev")
+    email = os.environ.get("GIT_AUTHOR_EMAIL", "dev@price-simulator.local")
+    env = {
+        "GIT_AUTHOR_DATE": iso_git(plan.when),
+        "GIT_COMMITTER_DATE": iso_git(plan.when),
+        "GIT_AUTHOR_NAME": author,
+        "GIT_COMMITTER_NAME": os.environ.get("GIT_COMMITTER_NAME", author),
+        "GIT_AUTHOR_EMAIL": email,
+        "GIT_COMMITTER_EMAIL": os.environ.get("GIT_COMMITTER_EMAIL", email),
+    }
+    run(cmd, env=env)
+    sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+    meta = {
+        "schema_version": 1,
+        "intent": plan.intent,
+        "author_date_requested": iso_git(plan.when),
+        "committer_date_requested": iso_git(plan.when),
+        "recorded_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "tool": "replay_backdated_history.py",
+        "tool_version": TOOL_VERSION,
