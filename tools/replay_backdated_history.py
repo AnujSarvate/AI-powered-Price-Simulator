@@ -273,3 +273,83 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
         "recorded_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "tool": "replay_backdated_history.py",
         "tool_version": TOOL_VERSION,
+        "extras": {"paths": plan.paths},
+    }
+    attach_metadata(sha, meta)
+    if LEDGER.is_file():
+        run(["git", "add", "metadata/commits.jsonl"], check=False)
+    return sha
+
+
+def reset_repo_keep_snapshot() -> None:
+    run(["git", "checkout", "--orphan", "replay-main"], check=False)
+    run(["git", "rm", "-rf", "."], check=False)
+    # orphan branch may fail if no commits - handle init
+    if not (ROOT / ".git").exists():
+        raise RuntimeError("not a git repository")
+
+
+def apply_history(dry_run: bool = False) -> None:
+    files = capture_snapshot()
+    write_snapshot(files)
+
+    slots = generate_schedule(date(2025, 1, 1), date(2025, 6, 30), seed=42)
+    planned = plan_commits_v2(files, slots)
+
+    if dry_run:
+        print(f"Would create {len(planned)} commits ({len(slots)} slots)")
+        print(f"File patches: {sum(1 for _ in build_patch_queue(files))}")
+        return
+
+    # Remove tracked/untracked build artifacts from root except snapshot
+    for path in list(ROOT.iterdir()):
+        if path.name in SKIP_TOP:
+            continue
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
+
+    # Initialize first commit on orphan branch
+    run(["git", "symbolic-ref", "HEAD", "refs/heads/main"], check=False)
+    if run(["git", "rev-parse", "HEAD"], check=False).returncode == 0:
+        run(["git", "checkout", "--orphan", "main-backdate"], check=False)
+        run(["git", "rm", "-rf", "."], check=False)
+    else:
+        run(["git", "checkout", "--orphan", "main"], check=False)
+
+    LEDGER.unlink(missing_ok=True)
+    run(["git", "notes", "remove", "--ignore-missing", "-f", "refs/heads/main"], check=False)
+
+    total = len(planned)
+    for idx, (plan, contents) in enumerate(planned, start=1):
+        sha = apply_plan(plan, contents)
+        if idx % 50 == 0 or idx == total:
+            print(f"[{idx}/{total}] {sha[:7]} {plan.when.date()} {plan.message[:50]}")
+
+    print(f"Done. {total} commits on branch.")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--capture-only", action="store_true")
+    parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    if args.capture_only:
+        files = capture_snapshot()
+        write_snapshot(files)
+        print(f"Captured {len(files)} files to {SNAPSHOT}")
+        return 0
+
+    if args.apply or args.dry_run:
+        apply_history(dry_run=args.dry_run)
+        return 0
+
+    parser.print_help()
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
