@@ -53,3 +53,38 @@ def optimize_price(
     if lo >= hi:
         raise ValueError("p_min must be less than p_max")
 
+    step = (hi - lo) / max(grid_steps - 1, 1)
+    for i in range(grid_steps):
+        candidates.append(lo + i * step)
+
+    best_p = lo
+    best_q = 0.0
+    best_profit = float("-inf")
+
+    for p in candidates:
+        if p < constraints.p_min or p > constraints.p_max:
+            continue
+        from app.core.demand import margin_ratio
+
+        if margin_ratio(p, params.unit_cost) < constraints.min_margin_ratio:
+            continue
+        q, prof = profit_at_price(p, week_index, params)
+        if prof > best_profit:
+            best_profit = prof
+            best_p = p
+            best_q = q
+
+    if best_profit == float("-inf"):
+        raise ValueError("no feasible price under constraints")
+
+    if abs(best_p - constraints.p_min) < 1e-9:
+        binding.append("p_min")
+    if abs(best_p - constraints.p_max) < 1e-9:
+        binding.append("p_max")
+
+    return OptimizeResult(
+        recommended_price=best_p,
+        expected_quantity=best_q,
+        expected_profit=best_profit,
+        binding_constraints=binding,
+    )
