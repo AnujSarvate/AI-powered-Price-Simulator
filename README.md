@@ -22,22 +22,3 @@ Git allows custom **author** and **committer** dates; this repo experiments with
 
 ## Quick concept
 
-| Piece | Role |
-|-------|------|
-| Simulation engine | Elasticity-based demand over time (promos, seasonality, competitor rules) |
-| ML module | Regress historical/synthetic features → demand; compare to formula baseline |
-| Optimizer | Suggest prices under min margin and max change constraints |
-| Web UI | Products, scenarios, charts, side-by-side comparison |
-
-## Suggested stack
-
-- **Frontend:** React + Vite + Recharts  
-- **Backend:** FastAPI (or Node)  
-- **ML:** scikit-learn + pandas  
-- **DB:** SQLite for development  
-
-Details and alternatives are in the scope doc.
-
-## License
-
-TBD — add before public release.
