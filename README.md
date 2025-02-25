@@ -40,3 +40,4 @@ Details and alternatives are in the scope doc.
 
 ## License
 
+TBD — add before public release.
