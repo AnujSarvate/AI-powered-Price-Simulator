@@ -58,3 +58,27 @@ For a research project, record **both** intended backdate and **actual** creatio
 
 **Recommended for this repo:** combine **trailers** (human-readable summary) + **`git notes`** (full JSON) + **append-only ledger** (`metadata/commits.jsonl`) for tooling.
 
+---
+
+## 4. Metadata schema (v1)
+
+Each logical commit should carry:
+
+```json
+{
+  "schema_version": 1,
+  "intent": "simulation_kernel_baseline",
+  "author_date_requested": "2025-03-15T14:30:00-05:00",
+  "committer_date_requested": "2025-03-15T14:30:00-05:00",
+  "recorded_at_utc": "2026-09-22T22:31:00Z",
+  "tool": "commit_with_metadata.py",
+  "tool_version": "0.1.0",
+  "extras": {}
+}
+```
+
+`recorded_at_utc` is wall-clock when the tool ran—useful for research on backdating vs. creation time.
+
+---
+
+## 5. Tooling in this repository
