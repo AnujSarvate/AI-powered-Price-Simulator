@@ -88,3 +88,27 @@ Adjust depth based on team size (solo vs. 3–4 person team) using the tiered sc
 - Real-time integration with live Amazon/Shopify APIs.
 - Full inventory replenishment ERP.
 - Production-grade multi-tenant billing.
+- Un audited financial compliance / tax engines.
+
+---
+
+## 6. Non-functional requirements
+
+| Requirement | Target |
+|-------------|--------|
+| Performance | 52-week, 50-product simulation < 2 s on laptop |
+| Correctness | Documented formulas; unit tests for demand and profit |
+| Accessibility | Basic keyboard nav, chart labels, color-safe palette |
+| Security | No secrets in repo; env vars for API keys; input validation |
+| Maintainability | Type hints (Python/TS), linting, CI running tests |
+
+---
+
+## 7. Proposed architecture
+
+```mermaid
+flowchart TB
+  subgraph client [Web Client]
+    UI[Dashboard and Charts]
+    Forms[Product and Scenario Forms]
+  end
