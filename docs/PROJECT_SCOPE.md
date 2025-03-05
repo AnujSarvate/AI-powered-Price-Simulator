@@ -202,3 +202,21 @@ AI-powered-Price-Simulator/
 1. **Demand forecasting (required)**  
    Features example: price, day-of-week, category one-hot, promo flag, lagged sales.  
    Model: Ridge regression or Random Forest Regressor.  
+   Output: predicted units; compare to elasticity-only baseline in evaluation table.
+
+2. **Price recommendation (required)**  
+   Not necessarily neural: constrained search over price grid using simulation or closed-form where valid.  
+   Label as **optimization**; optional ML can predict ε from product text embeddings (stretch).
+
+3. **LLM explanations (optional)**  
+   Input: JSON `{ weeks, prices, profits, elasticity }`.  
+   Output: narrative only; numbers must be copied from input.  
+   Mitigate hallucination: template + “do not invent metrics.”
+
+### 9.2 Evaluation metrics (include in final report)
+
+- Simulation: sanity checks (ε ↑ → optimal price behavior monotonicity tests).
+- ML: MAE, RMSE, R² on holdout; baseline comparison (mean predictor, elasticity-only).
+- Optimizer: known analytic case for constant ε and no constraints.
+
+### 9.3 Ethics & limitations (short section)
