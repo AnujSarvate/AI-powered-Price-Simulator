@@ -82,3 +82,27 @@ Q_i \leftarrow Q_i \cdot \prod_{j \neq i} \left(\frac{p_j}{p_{j,0}}\right)^{\gam
 Store \(\gamma_{ij}\) in sparse matrix (CSR) for O(n) updates per week.
 
 ### 3.3 Weekly simulation loop
+
+```
+INPUT: scenario_snapshot, rng_seed
+FOR t IN 0 .. horizon_weeks-1:
+  FOR each product i:
+    p_i <- pricing_policy(i, t, state)   # user price path or competitor rule
+    q_i <- demand_qty(p_i, t, params_i, cross_state)
+    q_i <- min(q_i, inventory_i)         # if inventory enabled
+    record WeeklyPoint(i, t, p_i, q_i, ...)
+    update inventory_i, cumulative profit
+OUTPUT: SimulationResult { series: Dict[product_id, List[WeeklyPoint]], aggregates }
+```
+
+**Complexity:** \(O(W \cdot P)\) per run; target \(W=52, P=50\) ≪ 1 ms in Python with NumPy vectorization over products per week.
+
+### 3.4 Stochastic mode
+
+Monte Carlo with `N` draws (`N` default 500, cap 5000):
+
+- Sample \(\varepsilon \sim \mathcal{N}(\hat\varepsilon, \sigma_\varepsilon)\), truncate at `ε_min`.
+- Sample multiplicative shock \(\eta \sim \text{LogNormal}(0, \sigma_\eta)\) on \(Q_0\).
+
+Report per-week **p10 / p50 / p90** profit across draws. Seed-controlled for reproducibility.
+
