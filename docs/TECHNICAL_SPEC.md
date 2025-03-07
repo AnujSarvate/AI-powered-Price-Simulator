@@ -40,3 +40,27 @@ C4Context
 ```python
 # Canonical types (Python); mirror in TypeScript via OpenAPI codegen
 
+@dataclass(frozen=True)
+class Money:
+    amount: Decimal  # quantized to 4 dp internally, 2 dp in API JSON
+
+@dataclass(frozen=True)
+class WeeklyPoint:
+    week_index: int  # 0-based
+    price: Money
+    quantity: float
+    revenue: Money
+    gross_profit: Money
+    margin_ratio: float  # (price - cost) / price
+```
+
+---
+
+## 3. Demand and simulation kernel
+
+### 3.1 Constant-elasticity demand (baseline)
+
+For product \(i\) at week \(t\):
+
+\[
+Q_i(p, t) = Q_{0,i} \cdot \left(\frac{p}{p_{0,i}}\right)^{-\varepsilon_i} \cdot S_i(t) \cdot M_i(t)
