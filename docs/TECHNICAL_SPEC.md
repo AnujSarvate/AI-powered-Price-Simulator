@@ -172,3 +172,27 @@ CSV upload or synthetic generator
   -> cross_val on train (TimeSeriesSplit, n_splits=5)
   -> persist with joblib + metadata JSON (features, metrics, git hash)
 ```
+
+**Serving:** `POST /v1/models/{id}/predict` with batch rows; latency target p95 < 50 ms for 100 rows.
+
+### 5.3 Evaluation protocol
+
+| Metric | Baseline A (mean) | Baseline B (elasticity only) | Model |
+|--------|-------------------|------------------------------|-------|
+| MAE | ✓ | ✓ | ✓ |
+| RMSE | ✓ | ✓ | ✓ |
+| MAPE | ✓ | ✓ | ✓ |
+| R² | ✓ | ✓ | ✓ |
+
+Store results in `DemandModel.metrics` for UI display.
+
+### 5.4 Integration with simulator
+
+Hybrid mode (default):
+
+\[
+Q_{\text{final}} = \alpha \cdot Q_{\text{ML}} + (1 - \alpha) \cdot Q_{\text{elasticity}}
+\]
+
+with \(\alpha \in [0,1]\) scenario-configurable; default `0.3` when model MAPE < threshold else `0`.
+
