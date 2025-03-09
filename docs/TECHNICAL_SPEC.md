@@ -148,3 +148,27 @@ Subject to:
 ## 5. Machine learning pipeline
 
 ### 5.1 Problem formulation
+
+**Supervised regression:** predict `units_sold` from feature vector \(\mathbf{x}\).
+
+| Feature | Type | Notes |
+|---------|------|-------|
+| `log_price` | float | \(\log(p + \epsilon)\) |
+| `promo_active` | bool | |
+| `week_of_year` | int | cyclical sin/cos encoding |
+| `category_*` | one-hot | |
+| `lag_1_sales` | float | optional |
+| `competitor_price_ratio` | float | \(p / p_{comp}\) |
+
+**Targets:** `units_sold` (float); optional quantile heads later.
+
+### 5.2 Training flow
+
+```
+CSV upload or synthetic generator
+  -> schema validation (pandera)
+  -> train/test split (time-based, last 20% weeks)
+  -> Pipeline: ColumnTransformer + StandardScaler + Ridge | RandomForestRegressor
+  -> cross_val on train (TimeSeriesSplit, n_splits=5)
+  -> persist with joblib + metadata JSON (features, metrics, git hash)
+```
