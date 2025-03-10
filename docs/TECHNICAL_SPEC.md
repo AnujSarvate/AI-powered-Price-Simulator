@@ -238,3 +238,27 @@ Auth: `Bearer` JWT (optional MVP: API key header for single tenant).
 
 ```sql
 CREATE TABLE products (
+  product_id UUID PRIMARY KEY,
+  sku TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  unit_cost NUMERIC(12,4) NOT NULL,
+  list_price NUMERIC(12,4) NOT NULL,
+  category_id UUID REFERENCES categories(category_id),
+  elasticity NUMERIC(8,4) NOT NULL CHECK (elasticity > 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE scenarios (
+  scenario_id UUID PRIMARY KEY,
+  name TEXT NOT NULL,
+  horizon_weeks INT NOT NULL CHECK (horizon_weeks BETWEEN 1 AND 104),
+  market_config JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE simulation_runs (
+  run_id UUID PRIMARY KEY,
+  scenario_id UUID NOT NULL REFERENCES scenarios(scenario_id),
+  scenario_snapshot JSONB NOT NULL,
+  mode TEXT NOT NULL,
