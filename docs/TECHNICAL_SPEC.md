@@ -280,3 +280,27 @@ Migrations: **Alembic**; SQLite for local dev with same DDL (adjusted types).
 
 - **State:** TanStack Query for server cache; URL query params for active `scenario_id` / `run_id`.
 - **Charts:** Recharts; downsample series > 500 points for render (LTTB algorithm).
+- **Forms:** React Hook Form + Zod schemas generated from OpenAPI (`openapi-typescript` + zod).
+- **Routing:** `/`, `/products`, `/scenarios/:id`, `/runs/:id`, `/models`.
+
+Performance budget: LCP < 2.5s on 3G Fast for dashboard shell (code-split model admin).
+
+---
+
+## 9. Cross-cutting concerns
+
+| Concern | Approach |
+|---------|----------|
+| Logging | structlog JSON; `run_id` correlation |
+| Config | pydantic-settings; `.env` not committed |
+| Validation | Pydantic v2 server; Zod client |
+| Testing | pytest: unit (kernel), property (hypothesis on demand), API (httpx + TestClient) |
+| CI | GitHub Actions: lint (ruff, eslint), typecheck (mypy, tsc), test, openapi diff |
+| Container | `docker compose`: api + postgres + web |
+
+---
+
+## 10. Security
+
+- Input size limits: CSV max 10 MB; `horizon_weeks` cap; Monte Carlo `n_draws` cap.
+- Rate limit: 60 req/min/IP on `/simulate` and `/models/train`.
