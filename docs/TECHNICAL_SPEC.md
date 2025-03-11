@@ -304,3 +304,27 @@ Performance budget: LCP < 2.5s on 3G Fast for dashboard shell (code-split model 
 
 - Input size limits: CSV max 10 MB; `horizon_weeks` cap; Monte Carlo `n_draws` cap.
 - Rate limit: 60 req/min/IP on `/simulate` and `/models/train`.
+- LLM: no PII in prompts; system prompt forbids inventing numeric fields not in JSON payload.
+- Dependencies: `pip-audit`, `npm audit` in CI (non-blocking warn initially).
+
+---
+
+## 11. Observability (minimal)
+
+- Prometheus metrics: `simulation_duration_seconds`, `optimize_requests_total`, `model_train_duration_seconds`.
+- Health checks: DB ping, disk writable for model artifacts.
+
+---
+
+## 12. Module dependency graph (backend)
+
+```mermaid
+flowchart LR
+  api[api.routes]
+  svc[services.scenario_service]
+  sim[core.simulation]
+  opt[core.optimizer]
+  ml[ml.pipeline]
+  repo[repositories]
+
+  api --> svc
