@@ -328,3 +328,21 @@ flowchart LR
   repo[repositories]
 
   api --> svc
+  svc --> sim
+  svc --> opt
+  svc --> ml
+  svc --> repo
+  opt --> sim
+  ml --> sim
+```
+
+**Rule:** `core.*` must not import from `api` or `repositories` (hexagonal / ports-adapters).
+
+---
+
+## 13. Test matrix (minimum)
+
+| Layer | Cases |
+|-------|--------|
+| `demand_qty` | ε→0+ limit, promo multiplier, seasonality boundary weeks |
+| `optimizer` | matches closed form; binding `p_min`; dynamic Δ_max path |
