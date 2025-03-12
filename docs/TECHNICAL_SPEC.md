@@ -346,3 +346,27 @@ flowchart LR
 |-------|--------|
 | `demand_qty` | ε→0+ limit, promo multiplier, seasonality boundary weeks |
 | `optimizer` | matches closed form; binding `p_min`; dynamic Δ_max path |
+| `simulation` | golden JSON for 3 fixtures; inventory depletion |
+| `monte_carlo` | fixed seed → fixed p50 |
+| API | CRUD products; simulate 400 on bad ε |
+| ML | synthetic data with known coefficients → R² > 0.95 |
+
+Target: **≥ 80% line coverage** on `core/` and `ml/` packages.
+
+---
+
+## 14. Deployment topology
+
+```
+Internet -> Caddy/NGINX (TLS)
+         -> web static (S3 or nginx)
+         -> api:8000 (uvicorn workers=2)
+         -> postgres:5432
+         -> volume /models for joblib artifacts
+```
+
+Environment variables: `DATABASE_URL`, `JWT_SECRET`, `LLM_API_KEY` (optional), `CORS_ORIGINS`.
+
+---
+
+## 15. Versioning and compatibility
