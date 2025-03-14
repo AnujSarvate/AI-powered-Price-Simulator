@@ -34,3 +34,21 @@ def repo_root() -> Path:
 
 
 def run_git(
+    args: list[str],
+    *,
+    env: dict[str, str] | None = None,
+    cwd: Path | None = None,
+) -> subprocess.CompletedProcess[str]:
+    merged = os.environ.copy()
+    if env:
+        merged.update(env)
+    return subprocess.run(
+        ["git", *args],
+        cwd=cwd,
+        env=merged,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+
