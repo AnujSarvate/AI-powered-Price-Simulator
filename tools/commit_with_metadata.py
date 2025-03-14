@@ -10,3 +10,27 @@ Research / tooling for this repository — see docs/GIT_COMMIT_METADATA.md.
 """
 
 from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+TOOL_VERSION = "0.1.0"
+LEDGER_PATH = Path("metadata/commits.jsonl")
+SCHEMA_VERSION = 1
+
+
+def repo_root() -> Path:
+    out = subprocess.check_output(
+        ["git", "rev-parse", "--show-toplevel"],
+        text=True,
+    ).strip()
+    return Path(out)
+
+
+def run_git(
