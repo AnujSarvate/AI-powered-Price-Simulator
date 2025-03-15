@@ -76,3 +76,27 @@ def build_metadata(
 ) -> dict[str, Any]:
     extras = parse_extra_json(extras_files, root) if extras_files else {}
     return {
+        "schema_version": SCHEMA_VERSION,
+        "intent": intent,
+        "author_date_requested": author_date,
+        "committer_date_requested": committer_date,
+        "recorded_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "tool": "commit_with_metadata.py",
+        "tool_version": TOOL_VERSION,
+        "extras": extras,
+    }
+
+
+def stage_and_commit(
+    root: Path,
+    *,
+    paths: list[str],
+    message: str,
+    author_date: str,
+    committer_date: str,
+    allow_empty: bool,
+) -> str:
+    if paths:
+        r = run_git(["add", "--", *paths], cwd=root)
+        if r.returncode != 0:
+            raise RuntimeError(r.stderr or r.stdout)
