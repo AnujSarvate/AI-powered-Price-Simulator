@@ -142,3 +142,27 @@ def cmd_commit(args: argparse.Namespace) -> int:
 
     if not args.allow_empty and not args.paths:
         print("error: pass file paths or --allow-empty", file=sys.stderr)
+        return 2
+
+    metadata = build_metadata(
+        author_date=args.author_date,
+        committer_date=committer_date,
+        intent=args.intent,
+        extras_files=args.extras,
+        root=root,
+    )
+
+    sha = stage_and_commit(
+        root,
+        paths=args.paths,
+        message=args.message,
+        author_date=args.author_date,
+        committer_date=committer_date,
+        allow_empty=args.allow_empty,
+    )
+    attach_note(root, sha, metadata)
+    append_ledger(root, sha, metadata)
+
+    print(sha)
+    if args.print_metadata:
+        print(json.dumps(metadata, indent=2))
