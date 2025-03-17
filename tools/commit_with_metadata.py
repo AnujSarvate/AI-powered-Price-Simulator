@@ -232,3 +232,11 @@ def main() -> int:
 
     p_ledger = sub.add_parser("ledger", help="Tail metadata/commits.jsonl")
     p_ledger.add_argument("--tail", type=int, default=20)
+    p_ledger.set_defaults(func=cmd_log_ledger)
+
+    args = parser.parse_args()
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
