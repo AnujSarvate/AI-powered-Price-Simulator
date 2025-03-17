@@ -208,3 +208,27 @@ def main() -> int:
     )
     p_commit.add_argument(
         "--committer-date",
+        help="Defaults to --author-date",
+    )
+    p_commit.add_argument("--message", "-m", required=True)
+    p_commit.add_argument(
+        "--intent",
+        help="Short label stored in metadata (e.g. phase0_demand_kernel)",
+    )
+    p_commit.add_argument(
+        "--extras",
+        action="append",
+        default=[],
+        help="JSON object file merged into metadata.extras (repeatable)",
+    )
+    p_commit.add_argument("--allow-empty", action="store_true")
+    p_commit.add_argument("--print-metadata", action="store_true")
+    p_commit.add_argument("paths", nargs="*")
+    p_commit.set_defaults(func=cmd_commit)
+
+    p_show = sub.add_parser("show", help="Print git note JSON for a revision")
+    p_show.add_argument("rev", nargs="?", default="HEAD")
+    p_show.set_defaults(func=cmd_show)
+
+    p_ledger = sub.add_parser("ledger", help="Tail metadata/commits.jsonl")
+    p_ledger.add_argument("--tail", type=int, default=20)
