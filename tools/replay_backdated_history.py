@@ -94,3 +94,27 @@ def capture_snapshot() -> dict[str, str]:
         if path.name in SKIP_FILES:
             continue
         if rel.startswith(".git/"):
+            continue
+        if rel.endswith((".pyc", ".db", ".joblib")):
+            continue
+        files[rel] = path.read_text(encoding="utf-8", errors="replace")
+    return files
+
+
+def write_snapshot(files: dict[str, str]) -> None:
+    if SNAPSHOT.exists():
+        shutil.rmtree(SNAPSHOT)
+    for rel, content in files.items():
+        dest = SNAPSHOT / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(content, encoding="utf-8")
+
+
+def file_priority(rel: str) -> tuple[int, str]:
+    order = [
+        "README.md",
+        "docs/",
+        "metadata/schema",
+        "tools/commit_with_metadata.py",
+        "tools/",
+        "backend/requirements.txt",
