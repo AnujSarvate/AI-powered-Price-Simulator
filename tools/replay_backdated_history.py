@@ -202,3 +202,27 @@ def describe_change(rel: str, content: str, suffix: str) -> tuple[str, str, str]
     elif rel.startswith("frontend/"):
         title = f"feat(ui): update {base}{part_note}"
         description = f"Build dashboard or client integration in {rel}{part_note}."
+        intent = f"ui/{slug}{suffix.replace(' ', '')}"
+    elif rel == "README.md":
+        title = f"docs: update README{part_note}"
+        description = f"Document setup and project overview{part_note}."
+        intent = f"readme{suffix.replace(' ', '')}"
+    elif rel == ".gitignore":
+        title = "chore: define gitignore"
+        description = "Ignore virtualenv, build artifacts, and local databases."
+        intent = "chore/gitignore"
+    elif "docker" in rel.lower():
+        title = f"chore: container config for {base}"
+        description = f"Add Docker or compose configuration in {rel}."
+        intent = f"docker/{slug}"
+    else:
+        title = f"feat: add {rel}{part_note}"
+        description = f"Introduce or extend {rel}{part_note} for the price simulator."
+        intent = f"build/{slug}{suffix.replace(' ', '')}"
+
+    lines = content.count("\n") + (1 if content and not content.endswith("\n") else 0)
+    description += f" ({lines} lines in file snapshot after this commit.)"
+    return title, description, intent
+
+
+def generate_schedule(
