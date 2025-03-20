@@ -160,3 +160,27 @@ def _merge_one_adjacent_same_file(merged: list[tuple[str, str, str]]) -> bool:
     for i in range(len(merged) - 1):
         if merged[i][0] == merged[i + 1][0]:
             rel = merged[i][0]
+            suffix = merged[i + 1][2] or merged[i][2]
+            merged[i : i + 2] = [(rel, merged[i + 1][1], suffix)]
+            return True
+    return False
+
+
+def trim_queue_to_slots(queue: list[tuple[str, str, str]], slot_count: int) -> list[tuple[str, str, str]]:
+    merged = list(queue)
+    while len(merged) > slot_count:
+        if not _merge_one_adjacent_same_file(merged):
+            break
+    return merged
+
+
+def describe_change(rel: str, content: str, suffix: str) -> tuple[str, str, str]:
+    base = rel.split("/")[-1]
+    part_note = f" ({suffix.strip()})" if suffix.strip() else ""
+    slug = rel.replace("/", "-").replace(".", "-")
+
+    if rel.startswith("backend/tests/"):
+        title = f"test: cover {base}{part_note}"
+        description = f"Add or extend tests in {rel} for pricing simulation behavior."
+        intent = f"test/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("docs/"):
