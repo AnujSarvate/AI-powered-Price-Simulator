@@ -244,3 +244,27 @@ def generate_schedule(
                     day.year,
                     day.month,
                     day.day,
+                    rng.randint(9, 20),
+                    rng.randint(0, 59),
+                    rng.randint(0, 59),
+                    tzinfo=timezone(timedelta(hours=-5)),
+                )
+            )
+        day += timedelta(days=1)
+    slots.sort()
+    return slots
+
+
+def plan_commits(files: dict[str, str], slots: list[datetime]) -> list[tuple[PlannedCommit, dict[str, str]]]:
+    raw = build_patch_queue(files, max_lines=PATCH_MAX_LINES)
+    patches = trim_queue_to_slots(raw, len(slots))
+
+    readme = files.get("README.md", "# AI-Powered Price Simulator\n")
+    while len(patches) < len(slots):
+        n = len(patches) + 1
+        readme += f"\n<!-- dev-milestone:{n} -->\n"
+        patches.append(("README.md", readme, f" milestone {n}"))
+
+    if len(patches) > len(slots):
+        patches = patches[: len(slots)]
+
