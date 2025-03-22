@@ -334,3 +334,27 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
     cmd = [
         "git",
         "commit",
+        "-m",
+        plan.title,
+        "-m",
+        plan.description,
+        "-m",
+        f"Metadata-Intent: {plan.intent}",
+        "-m",
+        f"Metadata-Sequence: {plan.sequence}",
+        "-m",
+        f"Metadata-Record: {plan.record_path}",
+    ]
+    if plan.allow_empty:
+        cmd.insert(2, "--allow-empty")
+
+    run(cmd, env=env)
+    sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+
+    final_meta = {**pre_meta, "commit": sha, "paths": plan.paths}
+    record_dest.write_text(json.dumps(final_meta, indent=2) + "\n", encoding="utf-8")
+    run(["git", "add", plan.record_path])
+    run(["git", "commit", "--amend", "--no-edit"], env=env)
+    sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+    final_meta["commit"] = sha
+    record_dest.write_text(json.dumps(final_meta, indent=2) + "\n", encoding="utf-8")
