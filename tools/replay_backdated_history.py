@@ -310,3 +310,27 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
         "GIT_AUTHOR_EMAIL": email,
         "GIT_COMMITTER_EMAIL": os.environ.get("GIT_COMMITTER_EMAIL", email),
     }
+
+    pre_meta = {
+        "schema_version": 2,
+        "sequence": plan.sequence,
+        "title": plan.title,
+        "description": plan.description,
+        "intent": plan.intent,
+        "author_date_requested": iso_git(plan.when),
+        "committer_date_requested": iso_git(plan.when),
+        "paths": [p for p in plan.paths if not p.endswith(".json")],
+        "recorded_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "tool": "replay_backdated_history.py",
+        "tool_version": TOOL_VERSION,
+    }
+
+    record_dest = ROOT / plan.record_path
+    record_dest.parent.mkdir(parents=True, exist_ok=True)
+    record_dest.write_text(json.dumps(pre_meta, indent=2) + "\n", encoding="utf-8")
+
+    run(["git", "add", "--"] + plan.paths)
+
+    cmd = [
+        "git",
+        "commit",
