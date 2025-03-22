@@ -358,3 +358,21 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
     sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
     final_meta["commit"] = sha
     record_dest.write_text(json.dumps(final_meta, indent=2) + "\n", encoding="utf-8")
+    run(["git", "add", plan.record_path])
+    run(["git", "commit", "--amend", "--no-edit"], env=env)
+    sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+    final_meta["commit"] = sha
+
+    attach_metadata(sha, final_meta)
+
+    LEDGER.parent.mkdir(parents=True, exist_ok=True)
+    with LEDGER.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(final_meta, sort_keys=True) + "\n")
+
+    return sha
+
+
+def apply_history(dry_run: bool = False) -> None:
+    files = capture_snapshot()
+    write_snapshot(files)
+
