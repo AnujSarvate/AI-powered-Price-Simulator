@@ -424,3 +424,13 @@ def main() -> int:
         print(f"Captured {len(files)} files to {SNAPSHOT}")
         return 0
 
+    if args.apply or args.dry_run:
+        apply_history(dry_run=args.dry_run)
+        return 0
+
+    parser.print_help()
+    return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
