@@ -28,3 +28,21 @@ def seasonality_multiplier(week_index: int, amplitude: float = 0.15) -> float:
     """Simple annual seasonality using week-of-year sine wave."""
     angle = 2.0 * math.pi * (week_index % 52) / 52.0
     return 1.0 + amplitude * math.sin(angle)
+
+
+def promo_multiplier(active: bool, lift: float = 1.25) -> float:
+    return lift if active else 1.0
+
+
+def demand_qty(
+    price: float,
+    week_index: int,
+    params: DemandParams,
+    *,
+    promo_active: bool = False,
+    seasonality_amplitude: float = 0.15,
+    promo_lift: float = 1.25,
+) -> float:
+    if price <= 0:
+        raise ValueError("price must be positive")
+    base = params.q0 * (price / params.p0) ** (-params.elasticity)
