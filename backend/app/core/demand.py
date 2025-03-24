@@ -46,3 +46,12 @@ def demand_qty(
     if price <= 0:
         raise ValueError("price must be positive")
     base = params.q0 * (price / params.p0) ** (-params.elasticity)
+    return base * seasonality_multiplier(week_index, seasonality_amplitude) * promo_multiplier(
+        promo_active, promo_lift
+    )
+
+
+def margin_ratio(price: float, unit_cost: float) -> float:
+    if price <= 0:
+        raise ValueError("price must be positive")
+    return (price - unit_cost) / price
