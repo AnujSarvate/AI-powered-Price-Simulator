@@ -34,3 +34,21 @@ def profit_at_price(price: float, week_index: int, params: DemandParams) -> tupl
     profit = (price - params.unit_cost) * qty
     return qty, profit
 
+
+def optimize_price(
+    week_index: int,
+    params: DemandParams,
+    constraints: PriceConstraints,
+    *,
+    grid_steps: int = 200,
+) -> OptimizeResult:
+    binding: list[str] = []
+
+    analytic = closed_form_optimum(params)
+    candidates: list[float] = []
+    if analytic is not None:
+        candidates.append(analytic)
+
+    lo, hi = constraints.p_min, constraints.p_max
+    if lo >= hi:
+        raise ValueError("p_min must be less than p_max")
