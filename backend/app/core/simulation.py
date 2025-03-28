@@ -10,3 +10,21 @@ from app.core.demand import DemandParams, demand_qty
 
 
 @dataclass
+class PromoWindow:
+    start_week: int
+    end_week: int
+    active: bool = True
+
+
+@dataclass
+class ProductScenario:
+    product_id: str
+    name: str
+    params: DemandParams
+    price_path: list[float] | None = None
+    promos: list[PromoWindow] = field(default_factory=list)
+
+
+@dataclass
+class WeeklyPoint:
+    week_index: int
