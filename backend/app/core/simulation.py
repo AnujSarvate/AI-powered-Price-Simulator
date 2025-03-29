@@ -76,3 +76,21 @@ def simulate_deterministic(
                     week_index=t,
                     price=price,
                     quantity=qty,
+                    revenue=revenue,
+                    gross_profit=profit,
+                    margin_ratio=margin,
+                )
+            )
+            total_profit += profit
+        series[prod.product_id] = points
+
+    return SimulationResult(
+        mode="deterministic",
+        seed=seed,
+        series=series,
+        total_profit=total_profit,
+    )
+
+
+def simulate_monte_carlo(
+    products: list[ProductScenario],
