@@ -58,3 +58,27 @@ def train_demand_model(
     x_train, x_test, y_train, y_test = train_test_split(
         x, y, test_size=test_size, random_state=random_state
     )
+
+    pipe = Pipeline(
+        steps=[
+            ("model", RandomForestRegressor(n_estimators=120, random_state=random_state)),
+        ]
+    )
+    pipe.fit(x_train, y_train)
+    preds = pipe.predict(x_test)
+
+    metrics = {
+        "mae": float(mean_absolute_error(y_test, preds)),
+        "r2": float(r2_score(y_test, preds)),
+        "baseline_mae": _baseline_mae(y_test),
+    }
+
+    model_id = str(uuid4())
+    artifact = artifacts_dir / f"{model_id}.joblib"
+    meta = artifacts_dir / f"{model_id}.json"
+    joblib.dump(pipe, artifact)
+    meta.write_text(json.dumps({"features": FEATURE_COLUMNS, "metrics": metrics}, indent=2))
+
+    return TrainResult(model_id=model_id, metrics=metrics, artifact_path=str(artifact))
+
+
