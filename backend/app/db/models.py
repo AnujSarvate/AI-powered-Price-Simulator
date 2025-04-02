@@ -40,3 +40,13 @@ class ScenarioORM(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
+class SimulationRunORM(Base):
+    __tablename__ = "simulation_runs"
+
+    run_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    scenario_id: Mapped[str] = mapped_column(String(36), index=True)
+    mode: Mapped[str] = mapped_column(String(32))
+    seed: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="completed")
+    result: Mapped[dict] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
