@@ -22,3 +22,5 @@ class ProductUpdate(BaseModel):
     unit_cost: float | None = Field(default=None, ge=0)
     list_price: float | None = Field(default=None, gt=0)
     category: str | None = None
+    elasticity: float | None = Field(default=None, gt=0)
+    q0: float | None = Field(default=None, gt=0)
