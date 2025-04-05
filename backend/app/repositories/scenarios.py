@@ -40,3 +40,11 @@ def save_run(
         result=result,
         status="completed",
     )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+def get_run(db: Session, run_id: str) -> SimulationRunORM | None:
+    return db.query(SimulationRunORM).filter(SimulationRunORM.run_id == run_id).first()
