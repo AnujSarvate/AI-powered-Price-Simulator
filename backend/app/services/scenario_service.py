@@ -70,3 +70,21 @@ def run_simulation(db: Session, scenario_id: str, req: SimulateRequest):
     run = scenario_repo.save_run(
         db,
         scenario_id=scenario_id,
+        mode=result.mode,
+        seed=result.seed,
+        result=payload,
+    )
+    return run, payload
+
+
+def run_optimize(db: Session, req: OptimizeRequest):
+    row = product_repo.get_product(db, req.product_id)
+    if not row:
+        return None
+    params = DemandParams(
+        q0=row.q0,
+        p0=row.list_price,
+        elasticity=row.elasticity,
+        unit_cost=row.unit_cost,
+    )
+    constraints = PriceConstraints(
