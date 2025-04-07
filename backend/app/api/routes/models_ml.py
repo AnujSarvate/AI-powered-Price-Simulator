@@ -10,3 +10,21 @@ from app.ml.synthetic import generate_synthetic_sales
 router = APIRouter(prefix="/models", tags=["models"])
 
 
+class TrainResponse(BaseModel):
+    model_id: str
+    metrics: dict[str, float]
+    artifact_path: str
+
+
+class PredictRequest(BaseModel):
+    rows: list[dict] = Field(default_factory=list)
+
+
+class PredictResponse(BaseModel):
+    predictions: list[float]
+
+
+@router.post("/train", response_model=TrainResponse)
+def train_model(use_synthetic: bool = True) -> TrainResponse:
+    df = generate_synthetic_sales() if use_synthetic else None
+    result = train_demand_model(df, artifacts_dir=Path(settings.artifacts_dir))
