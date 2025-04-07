@@ -88,3 +88,8 @@ def run_optimize(db: Session, req: OptimizeRequest):
         unit_cost=row.unit_cost,
     )
     constraints = PriceConstraints(
+        p_min=req.p_min,
+        p_max=req.p_max,
+        min_margin_ratio=req.min_margin_ratio,
+    )
+    return optimize_price(req.week_index, params, constraints)
