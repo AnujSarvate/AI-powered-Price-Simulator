@@ -40,3 +40,27 @@ def create_scenario(payload: ScenarioCreate, db: Session = Depends(get_db)) -> S
 
 
 @router.post("/{scenario_id}/simulate", response_model=SimulationRunRead)
+def simulate_scenario(
+    scenario_id: str, payload: SimulateRequest, db: Session = Depends(get_db)
+) -> SimulationRunRead:
+    try:
+        out = scenario_service.run_simulation(db, scenario_id, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not out:
+        raise HTTPException(status_code=404, detail="scenario not found")
+    run, result = out
+    series = {
+        pid: [WeeklyPointRead(**pt) for pt in points]
+        for pid, points in result["series"].items()
+    }
+    return SimulationRunRead(
+        run_id=run.run_id,
+        scenario_id=scenario_id,
+        mode=run.mode,
+        seed=run.seed,
+        total_profit=result["total_profit"],
+        series=series,
+    )
+
+
