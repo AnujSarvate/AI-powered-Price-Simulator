@@ -34,3 +34,4 @@ def test_product_crud_and_simulation(client):
     assert run.status_code == 200
     body = run.json()
     assert body["total_profit"] > 0
+    assert product_id in body["series"]
