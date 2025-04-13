@@ -40,3 +40,21 @@ export default function App() {
     try {
       let list = products;
       if (list.length === 0) {
+        const created = await api.createProduct({
+          sku: "MUG-001",
+          name: "Coffee Mug",
+          unit_cost: 4,
+          list_price: 12,
+          category: "merch",
+          elasticity: 1.2,
+          q0: 80,
+        });
+        list = [created];
+        setProducts(list);
+      }
+      const scenario = await api.createScenario({
+        name: "Dashboard demo",
+        horizon_weeks: 12,
+        product_ids: list.map((p) => p.product_id),
+      });
+      const simulation = await api.simulate(scenario.scenario_id);
