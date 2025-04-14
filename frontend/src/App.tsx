@@ -82,3 +82,27 @@ export default function App() {
   return (
     <main>
       <h1>AI-Powered Price Simulator</h1>
+      <p>Elasticity simulation, optimization API, and demand ML training.</p>
+
+      <div className="card row">
+        <button disabled={busy} onClick={seedAndSimulate}>
+          Run 12-week simulation
+        </button>
+        <button disabled={busy} onClick={trainModel}>
+          Train demand model
+        </button>
+        <span>{status}</span>
+      </div>
+
+      <div className="card">
+        <h2>Products ({products.length})</h2>
+        <ul>
+          {products.map((p) => (
+            <li key={p.product_id}>
+              {p.name} — ${p.list_price.toFixed(2)} (ε={p.elasticity})
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="card">
