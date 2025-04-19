@@ -58,3 +58,27 @@ For a research project, record **both** intended backdate and **actual** creatio
 
 **Recommended for this repo:** combine **trailers** (human-readable summary) + **`git notes`** (full JSON) + **append-only ledger** (`metadata/commits.jsonl`) for tooling.
 
+---
+
+## 4. Metadata schema (v2 — per commit)
+
+Each replayed commit adds **`metadata/records/NNNN.json`** where `NNNN` is the 1-based sequence. The JSON **`title`** and **`description`** match the Git commit subject and body. The commit message also includes trailers:
+
+- `Metadata-Intent`
+- `Metadata-Sequence`
+- `Metadata-Record`
+
+Git notes duplicate the same JSON plus the final `commit` SHA.
+
+## 5. Metadata schema (v1, legacy)
+
+Each logical commit should carry:
+
+```json
+{
+  "schema_version": 1,
+  "intent": "simulation_kernel_baseline",
+  "author_date_requested": "2025-03-15T14:30:00-05:00",
+  "committer_date_requested": "2025-03-15T14:30:00-05:00",
+  "recorded_at_utc": "2026-09-22T22:31:00Z",
+  "tool": "commit_with_metadata.py",
