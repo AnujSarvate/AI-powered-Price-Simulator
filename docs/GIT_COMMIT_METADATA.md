@@ -16,3 +16,21 @@ Each commit object stores four fields:
 | `committer date` | When the commit object was created |
 
 **Backdating** means setting `author date` and/or `committer date` to a chosen instant before `git commit` runs.
+
+Environment variables (ISO 8601 or Unix epoch):
+
+```bash
+export GIT_AUTHOR_DATE="2025-03-15T14:30:00-05:00"
+export GIT_COMMITTER_DATE="2025-03-15T14:30:00-05:00"
+git commit -m "example"
+```
+
+Or inline:
+
+```bash
+GIT_AUTHOR_DATE="2025-03-15T14:30:00" GIT_COMMITTER_DATE="2025-03-15T14:30:00" git commit -m "example"
+```
+
+**Feasibility:** Yes—Git accepts arbitrary valid dates. No cryptographic tie to wall-clock time unless you use **signed commits** (signature time is separate) or external audit logs.
+
+---
