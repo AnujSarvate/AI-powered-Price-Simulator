@@ -82,3 +82,21 @@ Each logical commit should carry:
   "committer_date_requested": "2025-03-15T14:30:00-05:00",
   "recorded_at_utc": "2026-09-22T22:31:00Z",
   "tool": "commit_with_metadata.py",
+  "tool_version": "0.1.0",
+  "extras": {}
+}
+```
+
+`recorded_at_utc` is wall-clock when the tool ran—useful for research on backdating vs. creation time.
+
+---
+
+## 5. Tooling in this repository
+
+```bash
+python tools/commit_with_metadata.py \
+  --author-date "2025-03-15T14:30:00-05:00" \
+  --message "feat(sim): add constant-elasticity demand" \
+  --intent simulation_kernel_baseline \
+  -- metadata/extra.json \
+  -- path/to/file.py
