@@ -100,3 +100,27 @@ python tools/commit_with_metadata.py \
   --intent simulation_kernel_baseline \
   -- metadata/extra.json \
   -- path/to/file.py
+```
+
+The script:
+
+1. Stages listed paths (or `--allow-empty`).
+2. Commits with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE`.
+3. Adds a **note** on the new commit SHA with full JSON metadata.
+4. Appends one line to `metadata/commits.jsonl`.
+
+Read metadata back:
+
+```bash
+python tools/commit_with_metadata.py show HEAD
+python tools/commit_with_metadata.py show <sha>
+```
+
+Push notes to origin (when remote exists):
+
+```bash
+git push origin refs/notes/commits
+```
+
+---
+
