@@ -148,3 +148,7 @@ Avoid empty noise commits; each row should map to a real file change when possib
 ---
 
 ## 8. References
+
+- `git commit` environment variables: Git documentation (`GIT_AUTHOR_DATE`, `GIT_COMMITTER_DATE`).
+- `git notes add`, `git notes show`, `refs/notes/commits`.
+- Conventional Commit trailers and `git interpret-trailers`.
