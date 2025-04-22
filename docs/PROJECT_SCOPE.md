@@ -34,3 +34,21 @@ This project delivers a **repeatable simulator** with:
 | **Systems** | REST API, auth optional, persistence, basic deployment story |
 | **UX** | Dashboard, charts, compare-two-scenarios view |
 
+Adjust depth based on team size (solo vs. 3–4 person team) using the tiered scope in §8.
+
+---
+
+## 4. Core use cases
+
+1. **Define catalog** — Add products with cost, base price, category, and optional competitor reference price.
+2. **Configure market** — Set elasticity, seasonality multiplier, promo windows, and competitor reaction (static or rule-based).
+3. **Run simulation** — For a horizon (e.g. 12 weeks), compute weekly units sold, revenue, profit, and inventory depletion.
+4. **Get AI recommendation** — System suggests a price band that maximizes profit subject to min margin and max price change per week.
+5. **Compare scenarios** — Side-by-side: “current price” vs. “recommended” vs. user custom price.
+6. **Explain (stretch)** — “Why did profit drop in week 6?” → LLM summarizes simulation outputs (no hallucinated numbers; grounded on API data).
+
+---
+
+## 5. Functional requirements
+
+### 5.1 Must have (MVP)
