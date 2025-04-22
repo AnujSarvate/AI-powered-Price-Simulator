@@ -76,3 +76,27 @@ Adjust depth based on team size (solo vs. 3–4 person team) using the tiered sc
 - Authentication (single-user local auth is enough for class).
 - Automated tests: simulation golden files, optimizer edge cases, API contract tests.
 
+### 5.3 Could have (differentiators)
+
+- Multi-product basket with **cross-elasticity** (simple 2×2 matrix).
+- Reinforcement-learning toy agent (tabular Q-learning) for dynamic pricing in a simulated market—clearly labeled “advanced module.”
+- LLM integration: structured prompt with JSON simulation summary → explanation and suggested experiments.
+- Public dataset hook (e.g. retail sales sample) instead of purely synthetic data.
+
+### 5.4 Out of scope (for one semester)
+
+- Real-time integration with live Amazon/Shopify APIs.
+- Full inventory replenishment ERP.
+- Production-grade multi-tenant billing.
+- Un audited financial compliance / tax engines.
+
+---
+
+## 6. Non-functional requirements
+
+| Requirement | Target |
+|-------------|--------|
+| Performance | 52-week, 50-product simulation < 2 s on laptop |
+| Correctness | Documented formulas; unit tests for demand and profit |
+| Accessibility | Basic keyboard nav, chart labels, color-safe palette |
+| Security | No secrets in repo; env vars for API keys; input validation |
