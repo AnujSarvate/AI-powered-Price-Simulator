@@ -52,3 +52,27 @@ Adjust depth based on team size (solo vs. 3–4 person team) using the tiered sc
 ## 5. Functional requirements
 
 ### 5.1 Must have (MVP)
+
+- User can CRUD products (name, unit cost, current price, category).
+- User sets **price elasticity** (ε) per product or category default; demand follows:
+
+  `Q(p) = Q₀ · (p / p₀)^(-ε) · seasonality(t) · promo(t)`
+
+  Document assumptions in the UI tooltip.
+
+- Simulation engine: discrete time steps (weekly), deterministic demand unless “uncertainty mode” enabled.
+- Metrics per run: units, revenue, gross profit, margin %, cumulative profit.
+- Charts: price vs. units, profit over time, scenario comparison (at least 2 series).
+- **ML module (minimal):** Train a regression model on synthetic or CSV historical data `(features → units sold)`; use it to suggest `Q₀` or short-horizon demand adjustment; show MAE/R² on holdout set in an “Model” panel.
+- **Optimizer:** Given cost and demand function, find price `p*` maximizing `(p - cost) · Q(p)` with constraints (min/max price, max Δp per period).
+- Persist scenarios and last run results (SQLite or PostgreSQL).
+- README with setup, architecture diagram, and how AI vs. simulation interact.
+
+### 5.2 Should have
+
+- Import/export scenarios as JSON or CSV.
+- Competitor price rule: “match within 5%” or “undercut by $X.”
+- Uncertainty mode: ε and Q₀ sampled from distributions → profit confidence interval (Monte Carlo, N runs).
+- Authentication (single-user local auth is enough for class).
+- Automated tests: simulation golden files, optimizer edge cases, API contract tests.
+
