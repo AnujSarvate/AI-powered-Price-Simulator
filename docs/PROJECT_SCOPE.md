@@ -118,3 +118,27 @@ flowchart TB
     Sim[Simulation Engine]
     Opt[Price Optimizer]
     ML[Demand ML Service]
+  end
+
+  subgraph data [Data]
+    DB[(SQLite or Postgres)]
+    CSV[Historical CSV / Synthetic Generator]
+  end
+
+  UI --> REST
+  Forms --> REST
+  REST --> Sim
+  REST --> Opt
+  REST --> ML
+  Sim --> DB
+  ML --> CSV
+  Opt --> Sim
+```
+
+**Suggested stack (pick one column and stay consistent):**
+
+| Layer | Option A (Python-heavy) | Option B (JS full-stack) |
+|-------|-------------------------|---------------------------|
+| Frontend | React + Vite + Recharts | Same |
+| Backend | FastAPI | Node + Express or Next.js API routes |
+| ML | scikit-learn, pandas | TensorFlow.js or Python microservice |
