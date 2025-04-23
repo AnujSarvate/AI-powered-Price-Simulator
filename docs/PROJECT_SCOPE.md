@@ -100,3 +100,21 @@ Adjust depth based on team size (solo vs. 3–4 person team) using the tiered sc
 | Correctness | Documented formulas; unit tests for demand and profit |
 | Accessibility | Basic keyboard nav, chart labels, color-safe palette |
 | Security | No secrets in repo; env vars for API keys; input validation |
+| Maintainability | Type hints (Python/TS), linting, CI running tests |
+
+---
+
+## 7. Proposed architecture
+
+```mermaid
+flowchart TB
+  subgraph client [Web Client]
+    UI[Dashboard and Charts]
+    Forms[Product and Scenario Forms]
+  end
+
+  subgraph api [Backend API]
+    REST[REST / JSON]
+    Sim[Simulation Engine]
+    Opt[Price Optimizer]
+    ML[Demand ML Service]
