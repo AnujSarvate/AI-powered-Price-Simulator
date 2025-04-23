@@ -166,3 +166,21 @@ AI-powered-Price-Simulator/
 ### Phase 0 — Foundation (week 1–2)
 
 - Repo setup, CI, README architecture section.
+- Domain models: `Product`, `Scenario`, `SimulationResult`.
+- Pure-function simulation module + golden tests (no UI).
+
+**Exit criteria:** `pytest`/`npm test` green; CLI or script runs one scenario and prints weekly profit.
+
+### Phase 1 — MVP (week 3–5)
+
+- REST API for products and run simulation.
+- React dashboard: edit product, run, line charts.
+- SQLite persistence.
+
+**Exit criteria:** Demo video path: create product → run 12 weeks → see chart.
+
+### Phase 2 — AI layer (week 6–7)
+
+- Synthetic data generator with known ground truth.
+- Train demand regressor; expose metrics and “suggested Q₀.”
+- Optimizer endpoint + UI “Apply recommendation” button.
