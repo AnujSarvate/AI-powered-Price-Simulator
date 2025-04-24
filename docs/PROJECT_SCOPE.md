@@ -184,3 +184,27 @@ AI-powered-Price-Simulator/
 - Synthetic data generator with known ground truth.
 - Train demand regressor; expose metrics and “suggested Q₀.”
 - Optimizer endpoint + UI “Apply recommendation” button.
+
+**Exit criteria:** Report subsection: model metrics, feature list, limitation (correlation ≠ causation).
+
+### Phase 3 — Polish & presentation (week 8+)
+
+- Scenario compare, export, uncertainty mode (if time).
+- Written report: problem, design, evaluation, ethics (pricing fairness note).
+- Optional deployment (Render, Fly.io, or class server).
+
+---
+
+## 9. AI design (be explicit for grading)
+
+### 9.1 What is “AI” in this project?
+
+1. **Demand forecasting (required)**  
+   Features example: price, day-of-week, category one-hot, promo flag, lagged sales.  
+   Model: Ridge regression or Random Forest Regressor.  
+   Output: predicted units; compare to elasticity-only baseline in evaluation table.
+
+2. **Price recommendation (required)**  
+   Not necessarily neural: constrained search over price grid using simulation or closed-form where valid.  
+   Label as **optimization**; optional ML can predict ε from product text embeddings (stretch).
+
