@@ -208,3 +208,27 @@ AI-powered-Price-Simulator/
    Not necessarily neural: constrained search over price grid using simulation or closed-form where valid.  
    Label as **optimization**; optional ML can predict ε from product text embeddings (stretch).
 
+3. **LLM explanations (optional)**  
+   Input: JSON `{ weeks, prices, profits, elasticity }`.  
+   Output: narrative only; numbers must be copied from input.  
+   Mitigate hallucination: template + “do not invent metrics.”
+
+### 9.2 Evaluation metrics (include in final report)
+
+- Simulation: sanity checks (ε ↑ → optimal price behavior monotonicity tests).
+- ML: MAE, RMSE, R² on holdout; baseline comparison (mean predictor, elasticity-only).
+- Optimizer: known analytic case for constant ε and no constraints.
+
+### 9.3 Ethics & limitations (short section)
+
+- Simulations are not financial advice.
+- Dynamic pricing can harm vulnerable customers; discuss transparency and caps (max surge %).
+
+---
+
+## 10. Sample scenarios (demo script)
+
+1. **Coffee shop mug** — Cost $4, price $12, ε = 1.2 → show optimal price near $8–$10 depending on Q₀.
+2. **Promo week** — 20% off for weeks 4–5; show volume spike and margin tradeoff.
+3. **Competitor undercut** — Rule triggers match; profit compresses unless ε is low.
+4. **ML vs. formula** — Same product; show when ML correction helps vs. overfits on tiny data.
