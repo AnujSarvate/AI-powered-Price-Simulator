@@ -232,3 +232,21 @@ AI-powered-Price-Simulator/
 2. **Promo week** — 20% off for weeks 4–5; show volume spike and margin tradeoff.
 3. **Competitor undercut** — Rule triggers match; profit compresses unless ε is low.
 4. **ML vs. formula** — Same product; show when ML correction helps vs. overfits on tiny data.
+
+---
+
+## 11. Roles (team of 4)
+
+| Role | Ownership |
+|------|-----------|
+| Simulation & optimizer | Core math, tests, performance |
+| Backend & data | API, DB, CSV pipeline, ML training endpoint |
+| Frontend | UI, charts, scenario UX |
+| Integration & QA | CI, E2E smoke test, report diagrams, demo script |
+
+Solo: implement MVP path only; use Phase 2 ML as minimal regression + one chart.
+
+---
+
+## 12. Definition of done
+
