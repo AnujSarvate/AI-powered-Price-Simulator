@@ -250,3 +250,20 @@ Solo: implement MVP path only; use Phase 2 ML as minimal regression + one chart.
 
 ## 12. Definition of done
 
+- [ ] All MVP requirements in §5.1 implemented and demoable.
+- [ ] ≥ 15 unit tests covering simulation and optimizer.
+- [ ] Architecture and setup documented in README.
+- [ ] Final report: 8–12 pages with evaluation table and future work.
+- [ ] One recorded demo (3–5 min) walking through a pricing decision.
+
+---
+
+## 13. Future extensions (post-course)
+
+- Live price feeds, A/B test module, multi-store inventory, federated learning on anonymized sales (research angle).
+
+---
+
+## 14. One-line thesis statement (for proposal cover)
+
+*We build an transparent economic simulator for pricing decisions, augmented by machine-learned demand forecasts and constrained optimization, so users can explore profit tradeoffs before changing real prices.*
