@@ -28,3 +28,21 @@ C4Context
 
 | Entity | Identity | Mutable fields | Invariants |
 |--------|----------|----------------|------------|
+| `Product` | `product_id: UUID` | name, sku, unit_cost, list_price, category_id, elasticity ε | `unit_cost ≥ 0`, `list_price > 0`, `ε > 0` |
+| `Category` | `category_id: UUID` | name, default_ε | `default_ε > 0` |
+| `Scenario` | `scenario_id: UUID` | name, horizon_weeks, products[], market_config | `horizon_weeks ∈ [1, 104]` |
+| `MarketConfig` | embedded in scenario | seasonality_curve, promos[], competitor_rule | promo windows non-overlapping per product |
+| `SimulationRun` | `run_id: UUID` | scenario snapshot, seed, results[] | immutable after `status=completed` |
+| `DemandModel` | `model_id: UUID` | artifact path, metrics, feature_schema_version | trained only on server |
+
+### 2.2 Value objects
+
+```python
+# Canonical types (Python); mirror in TypeScript via OpenAPI codegen
+
+@dataclass(frozen=True)
+class Money:
+    amount: Decimal  # quantized to 4 dp internally, 2 dp in API JSON
+
+@dataclass(frozen=True)
+class WeeklyPoint:
