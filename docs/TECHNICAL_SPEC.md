@@ -46,3 +46,27 @@ class Money:
 
 @dataclass(frozen=True)
 class WeeklyPoint:
+    week_index: int  # 0-based
+    price: Money
+    quantity: float
+    revenue: Money
+    gross_profit: Money
+    margin_ratio: float  # (price - cost) / price
+```
+
+---
+
+## 3. Demand and simulation kernel
+
+### 3.1 Constant-elasticity demand (baseline)
+
+For product \(i\) at week \(t\):
+
+\[
+Q_i(p, t) = Q_{0,i} \cdot \left(\frac{p}{p_{0,i}}\right)^{-\varepsilon_i} \cdot S_i(t) \cdot M_i(t)
+\]
+
+- \(S_i(t)\): seasonality multiplier, piecewise constant or Fourier terms (configurable).
+- \(M_i(t)\): promo multiplier (e.g. `0.8` price → effective demand boost via equivalent price reduction).
+
+**Implementation:** pure function `demand_qty(price, params) -> float`; no I/O.
