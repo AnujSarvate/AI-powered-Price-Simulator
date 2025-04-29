@@ -136,3 +136,27 @@ Subject to:
 - `|p - p_{t-1}| ≤ Δ_max` (dynamic pricing path)
 
 **Algorithm:**
+
+1. If no dynamic constraint and closed form valid → use \(p^*\), clip to `[p_min, p_max]`.
+2. Else **golden-section search** on log-price axis (unimodal assumption documented) or **uniform grid** 200 steps if promo kinks break unimodality.
+3. Multi-product: sequential per product (document as greedy) or small joint grid for P ≤ 3.
+
+**API:** `POST /v1/optimize` returns `{ recommended_price, expected_profit, binding_constraints[] }`.
+
+---
+
+## 5. Machine learning pipeline
+
+### 5.1 Problem formulation
+
+**Supervised regression:** predict `units_sold` from feature vector \(\mathbf{x}\).
+
+| Feature | Type | Notes |
+|---------|------|-------|
+| `log_price` | float | \(\log(p + \epsilon)\) |
+| `promo_active` | bool | |
+| `week_of_year` | int | cyclical sin/cos encoding |
+| `category_*` | one-hot | |
+| `lag_1_sales` | float | optional |
+| `competitor_price_ratio` | float | \(p / p_{comp}\) |
+
