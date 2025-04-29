@@ -112,3 +112,27 @@ Report per-week **p10 / p50 / p90** profit across draws. Seed-controlled for rep
 
 ### 4.1 Single-product static optimum (unconstrained)
 
+Maximize \(\pi(p) = (p - c) \cdot Q_0 (p/p_0)^{-\varepsilon}\).
+
+Closed form for \(\varepsilon > 1\):
+
+\[
+p^* = c \cdot \frac{\varepsilon}{\varepsilon - 1}
+\]
+
+(Validate against numeric optimizer in tests.)
+
+### 4.2 Constrained optimization (production path)
+
+Problem per product:
+
+\[
+\max_{p \in [p_{\min}, p_{\max}]} \ (p - c) \cdot Q(p)
+\]
+
+Subject to:
+
+- `margin_ratio(p) ≥ m_min`
+- `|p - p_{t-1}| ≤ Δ_max` (dynamic pricing path)
+
+**Algorithm:**
