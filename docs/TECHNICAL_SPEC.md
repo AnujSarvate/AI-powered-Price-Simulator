@@ -226,3 +226,21 @@ Auth: `Bearer` JWT (optional MVP: API key header for single tenant).
     "details": [{ "field": "elasticity", "issue": "must be > 0" }]
   }
 }
+```
+
+**Idempotency:** `POST /simulate` accepts `Idempotency-Key` header; duplicate returns same `run_id` if payload hash matches within 24h.
+
+---
+
+## 7. Persistence
+
+### 7.1 Schema (PostgreSQL-compatible)
+
+```sql
+CREATE TABLE products (
+  product_id UUID PRIMARY KEY,
+  sku TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  unit_cost NUMERIC(12,4) NOT NULL,
+  list_price NUMERIC(12,4) NOT NULL,
+  category_id UUID REFERENCES categories(category_id),
