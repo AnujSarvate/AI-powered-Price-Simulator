@@ -178,3 +178,27 @@ CSV upload or synthetic generator
 ### 5.3 Evaluation protocol
 
 | Metric | Baseline A (mean) | Baseline B (elasticity only) | Model |
+|--------|-------------------|------------------------------|-------|
+| MAE | ✓ | ✓ | ✓ |
+| RMSE | ✓ | ✓ | ✓ |
+| MAPE | ✓ | ✓ | ✓ |
+| R² | ✓ | ✓ | ✓ |
+
+Store results in `DemandModel.metrics` for UI display.
+
+### 5.4 Integration with simulator
+
+Hybrid mode (default):
+
+\[
+Q_{\text{final}} = \alpha \cdot Q_{\text{ML}} + (1 - \alpha) \cdot Q_{\text{elasticity}}
+\]
+
+with \(\alpha \in [0,1]\) scenario-configurable; default `0.3` when model MAPE < threshold else `0`.
+
+---
+
+## 6. API specification (REST, OpenAPI 3.1)
+
+Base URL: `/v1`  
+Auth: `Bearer` JWT (optional MVP: API key header for single tenant).
