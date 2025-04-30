@@ -202,3 +202,27 @@ with \(\alpha \in [0,1]\) scenario-configurable; default `0.3` when model MAPE <
 
 Base URL: `/v1`  
 Auth: `Bearer` JWT (optional MVP: API key header for single tenant).
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/health` | `{ status, version, db_ok }` |
+| CRUD | `/products` | Standard pagination `?limit=&cursor=` |
+| CRUD | `/scenarios` | Embeds `market_config` JSON schema v1 |
+| POST | `/scenarios/{id}/simulate` | Body: `{ seed?, mode: deterministic|monte_carlo, n_draws? }` |
+| GET | `/runs/{run_id}` | Full time series + aggregates |
+| POST | `/optimize` | Body: `{ product_id, scenario_id?, constraints }` |
+| POST | `/models/train` | multipart CSV or `{ use_synthetic: true, n_rows }` |
+| GET | `/models/{id}` | Metadata + metrics |
+| POST | `/models/{id}/predict` | Batch inference |
+| POST | `/explain` | Optional LLM; body: `{ run_id }` → cached narrative |
+
+**Error envelope:**
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "human readable",
+    "details": [{ "field": "elasticity", "issue": "must be > 0" }]
+  }
+}
