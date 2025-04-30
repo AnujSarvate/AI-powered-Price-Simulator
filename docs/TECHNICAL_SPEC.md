@@ -160,3 +160,21 @@ Subject to:
 | `lag_1_sales` | float | optional |
 | `competitor_price_ratio` | float | \(p / p_{comp}\) |
 
+**Targets:** `units_sold` (float); optional quantile heads later.
+
+### 5.2 Training flow
+
+```
+CSV upload or synthetic generator
+  -> schema validation (pandera)
+  -> train/test split (time-based, last 20% weeks)
+  -> Pipeline: ColumnTransformer + StandardScaler + Ridge | RandomForestRegressor
+  -> cross_val on train (TimeSeriesSplit, n_splits=5)
+  -> persist with joblib + metadata JSON (features, metrics, git hash)
+```
+
+**Serving:** `POST /v1/models/{id}/predict` with batch rows; latency target p95 < 50 ms for 100 rows.
+
+### 5.3 Evaluation protocol
+
+| Metric | Baseline A (mean) | Baseline B (elasticity only) | Model |
