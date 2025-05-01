@@ -268,3 +268,27 @@ CREATE TABLE simulation_runs (
   started_at TIMESTAMPTZ,
   completed_at TIMESTAMPTZ
 );
+
+CREATE INDEX idx_runs_scenario ON simulation_runs(scenario_id, completed_at DESC);
+```
+
+Migrations: **Alembic**; SQLite for local dev with same DDL (adjusted types).
+
+---
+
+## 8. Frontend architecture
+
+- **State:** TanStack Query for server cache; URL query params for active `scenario_id` / `run_id`.
+- **Charts:** Recharts; downsample series > 500 points for render (LTTB algorithm).
+- **Forms:** React Hook Form + Zod schemas generated from OpenAPI (`openapi-typescript` + zod).
+- **Routing:** `/`, `/products`, `/scenarios/:id`, `/runs/:id`, `/models`.
+
+Performance budget: LCP < 2.5s on 3G Fast for dashboard shell (code-split model admin).
+
+---
+
+## 9. Cross-cutting concerns
+
+| Concern | Approach |
+|---------|----------|
+| Logging | structlog JSON; `run_id` correlation |
