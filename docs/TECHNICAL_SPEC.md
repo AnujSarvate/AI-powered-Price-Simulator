@@ -376,3 +376,22 @@ Environment variables: `DATABASE_URL`, `JWT_SECRET`, `LLM_API_KEY` (optional), `
 - Simulation results include `engine_version` string for reproducibility audits.
 
 ---
+
+## 16. Open questions
+
+1. Inventory replenishment lead time in v1 or v2?
+2. JWT multi-user vs single shared demo tenant for class submission?
+3. Export format: Parquet for large Monte Carlo outputs?
+
+---
+
+## Appendix A — Reference implementation order
+
+1. `core/demand.py`, `core/simulation.py` + tests  
+2. `core/optimizer.py` + tests  
+3. `repositories` + Alembic  
+4. FastAPI routes simulate/optimize  
+5. ML pipeline + train endpoint  
+6. React scenario editor + charts  
+7. CI + Docker Compose  
+8. Optional LLM explain route  
