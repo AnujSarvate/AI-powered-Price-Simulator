@@ -310,3 +310,27 @@ Performance budget: LCP < 2.5s on 3G Fast for dashboard shell (code-split model 
 ---
 
 ## 11. Observability (minimal)
+
+- Prometheus metrics: `simulation_duration_seconds`, `optimize_requests_total`, `model_train_duration_seconds`.
+- Health checks: DB ping, disk writable for model artifacts.
+
+---
+
+## 12. Module dependency graph (backend)
+
+```mermaid
+flowchart LR
+  api[api.routes]
+  svc[services.scenario_service]
+  sim[core.simulation]
+  opt[core.optimizer]
+  ml[ml.pipeline]
+  repo[repositories]
+
+  api --> svc
+  svc --> sim
+  svc --> opt
+  svc --> ml
+  svc --> repo
+  opt --> sim
+  ml --> sim
