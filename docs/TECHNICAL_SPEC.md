@@ -352,3 +352,27 @@ flowchart LR
 | ML | synthetic data with known coefficients → R² > 0.95 |
 
 Target: **≥ 80% line coverage** on `core/` and `ml/` packages.
+
+---
+
+## 14. Deployment topology
+
+```
+Internet -> Caddy/NGINX (TLS)
+         -> web static (S3 or nginx)
+         -> api:8000 (uvicorn workers=2)
+         -> postgres:5432
+         -> volume /models for joblib artifacts
+```
+
+Environment variables: `DATABASE_URL`, `JWT_SECRET`, `LLM_API_KEY` (optional), `CORS_ORIGINS`.
+
+---
+
+## 15. Versioning and compatibility
+
+- API version in path `/v1`; breaking changes → `/v2`.
+- `market_config` JSON includes `"schema_version": 1`; migrations upgrade on read.
+- Simulation results include `engine_version` string for reproducibility audits.
+
+---
