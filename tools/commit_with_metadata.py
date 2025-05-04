@@ -40,3 +40,27 @@ def run_git(
     cwd: Path | None = None,
 ) -> subprocess.CompletedProcess[str]:
     merged = os.environ.copy()
+    if env:
+        merged.update(env)
+    return subprocess.run(
+        ["git", *args],
+        cwd=cwd,
+        env=merged,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+
+def parse_extra_json(paths: list[str], root: Path) -> dict[str, Any]:
+    merged: dict[str, Any] = {}
+    for p in paths:
+        path = (root / p).resolve()
+        if not path.is_file():
+            raise FileNotFoundError(f"extras file not found: {p}")
+        with path.open(encoding="utf-8") as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            raise ValueError(f"extras file must contain a JSON object: {p}")
+        merged.update(data)
+    return merged
