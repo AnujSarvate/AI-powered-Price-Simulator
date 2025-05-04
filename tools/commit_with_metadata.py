@@ -64,3 +64,21 @@ def parse_extra_json(paths: list[str], root: Path) -> dict[str, Any]:
             raise ValueError(f"extras file must contain a JSON object: {p}")
         merged.update(data)
     return merged
+
+
+def build_metadata(
+    *,
+    author_date: str,
+    committer_date: str,
+    intent: str | None,
+    extras_files: list[str],
+    root: Path,
+) -> dict[str, Any]:
+    extras = parse_extra_json(extras_files, root) if extras_files else {}
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "intent": intent,
+        "author_date_requested": author_date,
+        "committer_date_requested": committer_date,
+        "recorded_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "tool": "commit_with_metadata.py",
