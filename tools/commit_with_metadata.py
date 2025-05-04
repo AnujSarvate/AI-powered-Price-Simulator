@@ -82,3 +82,27 @@ def build_metadata(
         "committer_date_requested": committer_date,
         "recorded_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "tool": "commit_with_metadata.py",
+        "tool_version": TOOL_VERSION,
+        "extras": extras,
+    }
+
+
+def stage_and_commit(
+    root: Path,
+    *,
+    paths: list[str],
+    message: str,
+    author_date: str,
+    committer_date: str,
+    allow_empty: bool,
+) -> str:
+    if paths:
+        r = run_git(["add", "--", *paths], cwd=root)
+        if r.returncode != 0:
+            raise RuntimeError(r.stderr or r.stdout)
+
+    cmd = ["commit", "-m", message]
+    if allow_empty:
+        cmd.insert(1, "--allow-empty")
+
+    env = {
