@@ -106,3 +106,27 @@ def stage_and_commit(
         cmd.insert(1, "--allow-empty")
 
     env = {
+        "GIT_AUTHOR_DATE": author_date,
+        "GIT_COMMITTER_DATE": committer_date,
+    }
+    r = run_git(cmd, env=env, cwd=root)
+    if r.returncode != 0:
+        raise RuntimeError(r.stderr or r.stdout)
+
+    sha = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        text=True,
+    ).strip()
+    return sha
+
+
+def attach_note(root: Path, sha: str, metadata: dict[str, Any]) -> None:
+    payload = json.dumps(metadata, separators=(",", ":"), sort_keys=True)
+    r = run_git(["notes", "add", "-f", "-m", payload, sha], cwd=root)
+    if r.returncode != 0:
+        raise RuntimeError(f"git notes failed: {r.stderr or r.stdout}")
+
+
+def append_ledger(root: Path, sha: str, metadata: dict[str, Any]) -> None:
+    ledger = root / LEDGER_PATH
