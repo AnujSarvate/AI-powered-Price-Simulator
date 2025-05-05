@@ -130,3 +130,21 @@ def attach_note(root: Path, sha: str, metadata: dict[str, Any]) -> None:
 
 def append_ledger(root: Path, sha: str, metadata: dict[str, Any]) -> None:
     ledger = root / LEDGER_PATH
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    row = {"commit": sha, **metadata}
+    with ledger.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row, sort_keys=True) + "\n")
+
+
+def cmd_commit(args: argparse.Namespace) -> int:
+    root = repo_root()
+    committer_date = args.committer_date or args.author_date
+
+    if not args.allow_empty and not args.paths:
+        print("error: pass file paths or --allow-empty", file=sys.stderr)
+        return 2
+
+    metadata = build_metadata(
+        author_date=args.author_date,
+        committer_date=committer_date,
+        intent=args.intent,
