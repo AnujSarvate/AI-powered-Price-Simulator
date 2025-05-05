@@ -196,3 +196,21 @@ def cmd_log_ledger(args: argparse.Namespace) -> int:
     return 0
 
 
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Commit with backdated timestamps and JSON metadata.")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_commit = sub.add_parser("commit", help="Stage paths, backdate, commit, attach note + ledger")
+    p_commit.add_argument(
+        "--author-date",
+        required=True,
+        help='ISO 8601 timestamp, e.g. "2025-03-15T14:30:00-05:00"',
+    )
+    p_commit.add_argument(
+        "--committer-date",
+        help="Defaults to --author-date",
+    )
+    p_commit.add_argument("--message", "-m", required=True)
+    p_commit.add_argument(
+        "--intent",
+        help="Short label stored in metadata (e.g. phase0_demand_kernel)",
