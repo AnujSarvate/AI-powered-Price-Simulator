@@ -172,3 +172,27 @@ def cmd_commit(args: argparse.Namespace) -> int:
 def cmd_show(args: argparse.Namespace) -> int:
     root = repo_root()
     rev = args.rev or "HEAD"
+    r = run_git(["notes", "show", rev], cwd=root)
+    if r.returncode != 0:
+        print(r.stderr or r.stdout, file=sys.stderr)
+        return 1
+    try:
+        data = json.loads(r.stdout.strip())
+        print(json.dumps(data, indent=2))
+    except json.JSONDecodeError:
+        print(r.stdout)
+    return 0
+
+
+def cmd_log_ledger(args: argparse.Namespace) -> int:
+    root = repo_root()
+    ledger = root / LEDGER_PATH
+    if not ledger.is_file():
+        print("(empty ledger)", file=sys.stderr)
+        return 0
+    lines = ledger.read_text(encoding="utf-8").strip().splitlines()
+    for line in lines[-args.tail :]:
+        print(line)
+    return 0
+
+
