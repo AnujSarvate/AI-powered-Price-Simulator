@@ -34,3 +34,27 @@ SKIP_TOP = {".git", ".history_snapshot"}
 
 SKIP_DIRS = {
     ".git",
+    ".history_snapshot",
+    "node_modules",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "artifacts",
+    "htmlcov",
+    ".pytest_cache",
+    "metadata/records",
+}
+SKIP_FILES = {".DS_Store"}
+SKIP_CAPTURE_PREFIXES = (
+    "metadata/commits.jsonl",
+    "metadata/records/",
+    "CHANGELOG_DEV.md",
+)
+
+
+@dataclass
+class PlannedCommit:
+    when: datetime
+    title: str
+    description: str
+    intent: str
