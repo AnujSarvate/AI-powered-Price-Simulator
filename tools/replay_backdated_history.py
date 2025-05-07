@@ -58,3 +58,27 @@ class PlannedCommit:
     title: str
     description: str
     intent: str
+    paths: list[str]
+    sequence: int
+    record_path: str
+    allow_empty: bool = False
+
+
+def run(cmd: list[str], *, env: dict[str, str] | None = None, check: bool = True) -> subprocess.CompletedProcess[str]:
+    merged = os.environ.copy()
+    if env:
+        merged.update(env)
+    proc = subprocess.run(
+        cmd,
+        cwd=ROOT,
+        env=merged,
+        text=True,
+        capture_output=True,
+    )
+    if check and proc.returncode != 0:
+        raise RuntimeError((proc.stderr or proc.stdout or "").strip())
+    return proc
+
+
+def capture_snapshot() -> dict[str, str]:
+    files: dict[str, str] = {}
