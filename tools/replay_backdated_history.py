@@ -124,3 +124,27 @@ def file_priority(rel: str) -> tuple[int, str]:
         "backend/app/schemas/",
         "backend/app/repositories/",
         "backend/app/services/",
+        "backend/app/api/",
+        "backend/app/main.py",
+        "backend/tests/",
+        "data/",
+        "frontend/",
+        "docker-compose.yml",
+        ".gitignore",
+    ]
+    for idx, prefix in enumerate(order):
+        if rel == prefix or rel.startswith(prefix):
+            return idx, rel
+    return len(order), rel
+
+
+def build_patch_queue(files: dict[str, str], *, max_lines: int) -> list[tuple[str, str, str]]:
+    ordered = sorted(files.keys(), key=file_priority)
+    queue: list[tuple[str, str, str]] = []
+    for rel in ordered:
+        content = files[rel]
+        lines = content.splitlines(keepends=True)
+        if len(lines) <= max_lines:
+            queue.append((rel, content, ""))
+            continue
+        total_parts = (len(lines) + max_lines - 1) // max_lines
