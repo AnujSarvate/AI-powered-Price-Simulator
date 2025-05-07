@@ -82,3 +82,21 @@ def run(cmd: list[str], *, env: dict[str, str] | None = None, check: bool = True
 
 def capture_snapshot() -> dict[str, str]:
     files: dict[str, str] = {}
+    for path in ROOT.rglob("*"):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(ROOT).as_posix()
+        if rel.startswith(SKIP_CAPTURE_PREFIXES):
+            continue
+        parts = set(rel.split("/"))
+        if parts & SKIP_DIRS:
+            continue
+        if path.name in SKIP_FILES:
+            continue
+        if rel.startswith(".git/"):
+            continue
+        if rel.endswith((".pyc", ".db", ".joblib")):
+            continue
+        files[rel] = path.read_text(encoding="utf-8", errors="replace")
+    return files
+
