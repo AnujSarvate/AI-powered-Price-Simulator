@@ -166,3 +166,27 @@ def _merge_one_adjacent_same_file(merged: list[tuple[str, str, str]]) -> bool:
     return False
 
 
+def trim_queue_to_slots(queue: list[tuple[str, str, str]], slot_count: int) -> list[tuple[str, str, str]]:
+    merged = list(queue)
+    while len(merged) > slot_count:
+        if not _merge_one_adjacent_same_file(merged):
+            break
+    return merged
+
+
+def describe_change(rel: str, content: str, suffix: str) -> tuple[str, str, str]:
+    base = rel.split("/")[-1]
+    part_note = f" ({suffix.strip()})" if suffix.strip() else ""
+    slug = rel.replace("/", "-").replace(".", "-")
+
+    if rel.startswith("backend/tests/"):
+        title = f"test: cover {base}{part_note}"
+        description = f"Add or extend tests in {rel} for pricing simulation behavior."
+        intent = f"test/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("docs/"):
+        title = f"docs: document {base}{part_note}"
+        description = f"Write project documentation in {rel}{part_note}."
+        intent = f"docs/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("backend/app/core/"):
+        title = f"feat(core): implement {base}{part_note}"
+        description = f"Implement simulation or optimization logic in {rel}{part_note}."
