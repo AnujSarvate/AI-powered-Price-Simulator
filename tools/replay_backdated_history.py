@@ -148,3 +148,21 @@ def build_patch_queue(files: dict[str, str], *, max_lines: int) -> list[tuple[st
             queue.append((rel, content, ""))
             continue
         total_parts = (len(lines) + max_lines - 1) // max_lines
+        for part in range(1, total_parts + 1):
+            end = min(part * max_lines, len(lines))
+            cumulative = "".join(lines[:end])
+            suffix = f" part {part}/{total_parts}"
+            queue.append((rel, cumulative, suffix))
+    return queue
+
+
+def _merge_one_adjacent_same_file(merged: list[tuple[str, str, str]]) -> bool:
+    for i in range(len(merged) - 1):
+        if merged[i][0] == merged[i + 1][0]:
+            rel = merged[i][0]
+            suffix = merged[i + 1][2] or merged[i][2]
+            merged[i : i + 2] = [(rel, merged[i + 1][1], suffix)]
+            return True
+    return False
+
+
