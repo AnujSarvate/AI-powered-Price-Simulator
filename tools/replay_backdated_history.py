@@ -190,3 +190,21 @@ def describe_change(rel: str, content: str, suffix: str) -> tuple[str, str, str]
     elif rel.startswith("backend/app/core/"):
         title = f"feat(core): implement {base}{part_note}"
         description = f"Implement simulation or optimization logic in {rel}{part_note}."
+        intent = f"core/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("backend/app/ml/"):
+        title = f"feat(ml): implement {base}{part_note}"
+        description = f"Add demand forecasting or training code in {rel}{part_note}."
+        intent = f"ml/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("backend/app/api/"):
+        title = f"feat(api): expose {base}{part_note}"
+        description = f"Add REST route handlers in {rel}{part_note}."
+        intent = f"api/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("frontend/"):
+        title = f"feat(ui): update {base}{part_note}"
+        description = f"Build dashboard or client integration in {rel}{part_note}."
+        intent = f"ui/{slug}{suffix.replace(' ', '')}"
+    elif rel == "README.md":
+        title = f"docs: update README{part_note}"
+        description = f"Document setup and project overview{part_note}."
+        intent = f"readme{suffix.replace(' ', '')}"
+    elif rel == ".gitignore":
