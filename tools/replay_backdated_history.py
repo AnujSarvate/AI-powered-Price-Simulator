@@ -232,3 +232,27 @@ def generate_schedule(
     seed: int,
     min_per_day: int = 1,
     max_per_day: int = 5,
+) -> list[datetime]:
+    rng = random.Random(seed)
+    slots: list[datetime] = []
+    day = start
+    while day <= end:
+        n = rng.randint(min_per_day, max_per_day)
+        for _ in range(n):
+            slots.append(
+                datetime(
+                    day.year,
+                    day.month,
+                    day.day,
+                    rng.randint(9, 20),
+                    rng.randint(0, 59),
+                    rng.randint(0, 59),
+                    tzinfo=timezone(timedelta(hours=-5)),
+                )
+            )
+        day += timedelta(days=1)
+    slots.sort()
+    return slots
+
+
+def plan_commits(files: dict[str, str], slots: list[datetime]) -> list[tuple[PlannedCommit, dict[str, str]]]:
