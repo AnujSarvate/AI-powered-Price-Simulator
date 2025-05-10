@@ -274,3 +274,27 @@ def plan_commits(files: dict[str, str], slots: list[datetime]) -> list[tuple[Pla
         record_path = f"{RECORDS_DIR}/{seq:04d}.json"
         pc = PlannedCommit(
             when=when,
+            title=title,
+            description=description,
+            intent=intent,
+            paths=[rel, record_path],
+            sequence=seq,
+            record_path=record_path,
+        )
+        out.append((pc, {rel: chunk}))
+    return out
+
+
+def iso_git(dt: datetime) -> str:
+    return dt.isoformat()
+
+
+def attach_metadata(sha: str, meta: dict) -> None:
+    payload = json.dumps(meta, separators=(",", ":"), sort_keys=True)
+    run(["git", "notes", "add", "-f", "-m", payload, sha])
+
+
+def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
+    for rel, text in contents.items():
+        dest = ROOT / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
