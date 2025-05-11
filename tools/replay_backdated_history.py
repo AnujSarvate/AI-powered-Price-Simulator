@@ -364,3 +364,27 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
 
     LEDGER.parent.mkdir(parents=True, exist_ok=True)
     with LEDGER.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(final_meta, sort_keys=True) + "\n")
+
+    return sha
+
+
+def apply_history(dry_run: bool = False) -> None:
+    files = capture_snapshot()
+    write_snapshot(files)
+
+    slots = generate_schedule(date(2025, 1, 1), date(2025, 6, 30), seed=42)
+    planned = plan_commits(files, slots)
+
+    if dry_run:
+        print(f"Would create {len(planned)} commits ({len(slots)} slots)")
+        print(f"Raw patches: {len(build_patch_queue(files, max_lines=PATCH_MAX_LINES))}")
+        print(f"Sample title: {planned[0][0].title}")
+        return
+
+    for path in list(ROOT.iterdir()):
+        if path.name in SKIP_TOP:
+            continue
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
