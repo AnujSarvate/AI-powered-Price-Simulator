@@ -322,3 +322,21 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
         "paths": [p for p in plan.paths if not p.endswith(".json")],
         "recorded_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "tool": "replay_backdated_history.py",
+        "tool_version": TOOL_VERSION,
+    }
+
+    record_dest = ROOT / plan.record_path
+    record_dest.parent.mkdir(parents=True, exist_ok=True)
+    record_dest.write_text(json.dumps(pre_meta, indent=2) + "\n", encoding="utf-8")
+
+    run(["git", "add", "--"] + plan.paths)
+
+    cmd = [
+        "git",
+        "commit",
+        "-m",
+        plan.title,
+        "-m",
+        plan.description,
+        "-m",
+        f"Metadata-Intent: {plan.intent}",
