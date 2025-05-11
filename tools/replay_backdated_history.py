@@ -298,3 +298,27 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
     for rel, text in contents.items():
         dest = ROOT / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(text, encoding="utf-8")
+
+    author = os.environ.get("GIT_AUTHOR_NAME", "Price Simulator Dev")
+    email = os.environ.get("GIT_AUTHOR_EMAIL", "dev@price-simulator.local")
+    env = {
+        "GIT_AUTHOR_DATE": iso_git(plan.when),
+        "GIT_COMMITTER_DATE": iso_git(plan.when),
+        "GIT_AUTHOR_NAME": author,
+        "GIT_COMMITTER_NAME": os.environ.get("GIT_COMMITTER_NAME", author),
+        "GIT_AUTHOR_EMAIL": email,
+        "GIT_COMMITTER_EMAIL": os.environ.get("GIT_COMMITTER_EMAIL", email),
+    }
+
+    pre_meta = {
+        "schema_version": 2,
+        "sequence": plan.sequence,
+        "title": plan.title,
+        "description": plan.description,
+        "intent": plan.intent,
+        "author_date_requested": iso_git(plan.when),
+        "committer_date_requested": iso_git(plan.when),
+        "paths": [p for p in plan.paths if not p.endswith(".json")],
+        "recorded_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "tool": "replay_backdated_history.py",
