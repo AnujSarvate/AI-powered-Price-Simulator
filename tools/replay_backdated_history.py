@@ -388,3 +388,21 @@ def apply_history(dry_run: bool = False) -> None:
         if path.is_dir():
             shutil.rmtree(path)
         else:
+            path.unlink()
+
+    run(["git", "checkout", "--orphan", "main-replay"], check=False)
+    run(["git", "rm", "-rf", "."], check=False)
+    run(["git", "branch", "-M", "main"], check=False)
+
+    records_dir = ROOT / RECORDS_DIR
+    if records_dir.exists():
+        shutil.rmtree(records_dir)
+    LEDGER.unlink(missing_ok=True)
+
+    total = len(planned)
+    for idx, (plan, contents) in enumerate(planned, start=1):
+        sha = apply_plan(plan, contents)
+        if idx % 50 == 0 or idx == total:
+            print(f"[{idx}/{total}] {sha[:7]} {plan.title[:55]}")
+
+    print(f"Done. {total} commits on branch.")
