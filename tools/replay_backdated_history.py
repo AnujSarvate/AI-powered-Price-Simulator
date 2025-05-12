@@ -406,3 +406,27 @@ def apply_history(dry_run: bool = False) -> None:
             print(f"[{idx}/{total}] {sha[:7]} {plan.title[:55]}")
 
     print(f"Done. {total} commits on branch.")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--capture-only", action="store_true")
+    parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    if args.capture_only:
+        files = capture_snapshot()
+        write_snapshot(files)
+        print(f"Captured {len(files)} files to {SNAPSHOT}")
+        return 0
+
+    if args.apply or args.dry_run:
+        apply_history(dry_run=args.dry_run)
+        return 0
+
+    parser.print_help()
+    return 2
+
+
+if __name__ == "__main__":
