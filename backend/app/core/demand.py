@@ -34,3 +34,24 @@ def promo_multiplier(active: bool, lift: float = 1.25) -> float:
     return lift if active else 1.0
 
 
+def demand_qty(
+    price: float,
+    week_index: int,
+    params: DemandParams,
+    *,
+    promo_active: bool = False,
+    seasonality_amplitude: float = 0.15,
+    promo_lift: float = 1.25,
+) -> float:
+    if price <= 0:
+        raise ValueError("price must be positive")
+    base = params.q0 * (price / params.p0) ** (-params.elasticity)
+    return base * seasonality_multiplier(week_index, seasonality_amplitude) * promo_multiplier(
+        promo_active, promo_lift
+    )
+
+
+def margin_ratio(price: float, unit_cost: float) -> float:
+    if price <= 0:
+        raise ValueError("price must be positive")
+    return (price - unit_cost) / price
