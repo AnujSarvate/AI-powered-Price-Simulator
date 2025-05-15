@@ -40,3 +40,27 @@ def optimize_price(
     params: DemandParams,
     constraints: PriceConstraints,
     *,
+    grid_steps: int = 200,
+) -> OptimizeResult:
+    binding: list[str] = []
+
+    analytic = closed_form_optimum(params)
+    candidates: list[float] = []
+    if analytic is not None:
+        candidates.append(analytic)
+
+    lo, hi = constraints.p_min, constraints.p_max
+    if lo >= hi:
+        raise ValueError("p_min must be less than p_max")
+
+    step = (hi - lo) / max(grid_steps - 1, 1)
+    for i in range(grid_steps):
+        candidates.append(lo + i * step)
+
+    best_p = lo
+    best_q = 0.0
+    best_profit = float("-inf")
+
+    for p in candidates:
+        if p < constraints.p_min or p > constraints.p_max:
+            continue
