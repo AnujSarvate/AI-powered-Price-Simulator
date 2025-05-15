@@ -64,3 +64,21 @@ def optimize_price(
     for p in candidates:
         if p < constraints.p_min or p > constraints.p_max:
             continue
+        from app.core.demand import margin_ratio
+
+        if margin_ratio(p, params.unit_cost) < constraints.min_margin_ratio:
+            continue
+        q, prof = profit_at_price(p, week_index, params)
+        if prof > best_profit:
+            best_profit = prof
+            best_p = p
+            best_q = q
+
+    if best_profit == float("-inf"):
+        raise ValueError("no feasible price under constraints")
+
+    if abs(best_p - constraints.p_min) < 1e-9:
+        binding.append("p_min")
+    if abs(best_p - constraints.p_max) < 1e-9:
+        binding.append("p_max")
+
