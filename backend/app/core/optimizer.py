@@ -82,3 +82,9 @@ def optimize_price(
     if abs(best_p - constraints.p_max) < 1e-9:
         binding.append("p_max")
 
+    return OptimizeResult(
+        recommended_price=best_p,
+        expected_quantity=best_q,
+        expected_profit=best_profit,
+        binding_constraints=binding,
+    )
