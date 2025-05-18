@@ -46,3 +46,27 @@ def train_demand_model(
     test_size: float = 0.2,
     random_state: int = 42,
 ) -> TrainResult:
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    data = df if df is not None else generate_synthetic_sales()
+
+    missing = [c for c in FEATURE_COLUMNS + ["units_sold"] if c not in data.columns]
+    if missing:
+        raise ValueError(f"missing columns: {missing}")
+
+    x = data[FEATURE_COLUMNS]
+    y = data["units_sold"]
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, test_size=test_size, random_state=random_state
+    )
+
+    pipe = Pipeline(
+        steps=[
+            ("model", RandomForestRegressor(n_estimators=120, random_state=random_state)),
+        ]
+    )
+    pipe.fit(x_train, y_train)
+    preds = pipe.predict(x_test)
+
+    metrics = {
+        "mae": float(mean_absolute_error(y_test, preds)),
+        "r2": float(r2_score(y_test, preds)),
