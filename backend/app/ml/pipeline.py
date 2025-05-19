@@ -88,3 +88,4 @@ def predict_units(model_path: Path, rows: list[dict]) -> list[float]:
     for col in FEATURE_COLUMNS:
         if col not in df.columns:
             raise ValueError(f"missing feature column: {col}")
+    return [float(x) for x in pipe.predict(df[FEATURE_COLUMNS])]
