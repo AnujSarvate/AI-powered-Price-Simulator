@@ -70,3 +70,21 @@ def train_demand_model(
     metrics = {
         "mae": float(mean_absolute_error(y_test, preds)),
         "r2": float(r2_score(y_test, preds)),
+        "baseline_mae": _baseline_mae(y_test),
+    }
+
+    model_id = str(uuid4())
+    artifact = artifacts_dir / f"{model_id}.joblib"
+    meta = artifacts_dir / f"{model_id}.json"
+    joblib.dump(pipe, artifact)
+    meta.write_text(json.dumps({"features": FEATURE_COLUMNS, "metrics": metrics}, indent=2))
+
+    return TrainResult(model_id=model_id, metrics=metrics, artifact_path=str(artifact))
+
+
+def predict_units(model_path: Path, rows: list[dict]) -> list[float]:
+    pipe = joblib.load(model_path)
+    df = pd.DataFrame(rows)
+    for col in FEATURE_COLUMNS:
+        if col not in df.columns:
+            raise ValueError(f"missing feature column: {col}")
