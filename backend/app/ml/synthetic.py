@@ -40,3 +40,7 @@ def generate_synthetic_sales(
                 f"category_{categories[1]}": 1 if category == categories[1] else 0,
                 f"category_{categories[2]}": 1 if category == categories[2] else 0,
                 "units_sold": max(0.5, units),
+            }
+        )
+
+    return pd.DataFrame(rows)
