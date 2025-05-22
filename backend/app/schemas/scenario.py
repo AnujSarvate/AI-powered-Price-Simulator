@@ -22,3 +22,27 @@ class ScenarioRead(BaseModel):
 
 class SimulateRequest(BaseModel):
     mode: Literal["deterministic", "monte_carlo"] = "deterministic"
+    seed: int | None = 42
+    n_draws: int = Field(default=200, ge=10, le=5000)
+
+
+class WeeklyPointRead(BaseModel):
+    week_index: int
+    price: float
+    quantity: float
+    revenue: float
+    gross_profit: float
+    margin_ratio: float
+
+
+class SimulationRunRead(BaseModel):
+    run_id: str
+    scenario_id: str
+    mode: str
+    seed: int | None
+    total_profit: float
+    series: dict[str, list[WeeklyPointRead]]
+
+
+class OptimizeRequest(BaseModel):
+    product_id: str
