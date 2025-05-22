@@ -46,3 +46,14 @@ class SimulationRunRead(BaseModel):
 
 class OptimizeRequest(BaseModel):
     product_id: str
+    week_index: int = 0
+    p_min: float = Field(gt=0)
+    p_max: float = Field(gt=0)
+    min_margin_ratio: float = Field(default=0.0, ge=0, lt=1)
+
+
+class OptimizeResponse(BaseModel):
+    recommended_price: float
+    expected_quantity: float
+    expected_profit: float
+    binding_constraints: list[str]
