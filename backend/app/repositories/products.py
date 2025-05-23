@@ -22,3 +22,19 @@ def create_product(db: Session, payload: ProductCreate) -> ProductORM:
 
 def update_product(db: Session, product_id: str, payload: ProductUpdate) -> ProductORM | None:
     row = get_product(db, product_id)
+    if not row:
+        return None
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(row, key, value)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+def delete_product(db: Session, product_id: str) -> bool:
+    row = get_product(db, product_id)
+    if not row:
+        return False
+    db.delete(row)
+    db.commit()
+    return True
