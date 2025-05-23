@@ -46,3 +46,5 @@ def save_run(
     return row
 
 
+def get_run(db: Session, run_id: str) -> SimulationRunORM | None:
+    return db.query(SimulationRunORM).filter(SimulationRunORM.run_id == run_id).first()
