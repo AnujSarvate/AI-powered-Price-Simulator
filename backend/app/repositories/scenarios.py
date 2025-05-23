@@ -28,3 +28,21 @@ def create_scenario(db: Session, payload: ScenarioCreate) -> ScenarioORM:
 def save_run(
     db: Session,
     *,
+    scenario_id: str,
+    mode: str,
+    seed: int | None,
+    result: dict,
+) -> SimulationRunORM:
+    row = SimulationRunORM(
+        scenario_id=scenario_id,
+        mode=mode,
+        seed=seed,
+        result=result,
+        status="completed",
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
