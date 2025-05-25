@@ -52,3 +52,27 @@ def run_simulation(db: Session, scenario_id: str, req: SimulateRequest):
         raise ValueError("scenario has no valid products")
 
     if req.mode == "monte_carlo":
+        result = simulate_monte_carlo(
+            products,
+            scenario.horizon_weeks,
+            n_draws=req.n_draws,
+            seed=req.seed or 42,
+        )
+    else:
+        result = simulate_deterministic(products, scenario.horizon_weeks, seed=req.seed)
+
+    payload = {
+        "total_profit": result.total_profit,
+        "series": {
+            pid: [p.__dict__ for p in points] for pid, points in result.series.items()
+        },
+    }
+    run = scenario_repo.save_run(
+        db,
+        scenario_id=scenario_id,
+        mode=result.mode,
+        seed=result.seed,
+        result=payload,
+    )
+    return run, payload
+
