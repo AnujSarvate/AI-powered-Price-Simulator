@@ -76,3 +76,20 @@ def run_simulation(db: Session, scenario_id: str, req: SimulateRequest):
     )
     return run, payload
 
+
+def run_optimize(db: Session, req: OptimizeRequest):
+    row = product_repo.get_product(db, req.product_id)
+    if not row:
+        return None
+    params = DemandParams(
+        q0=row.q0,
+        p0=row.list_price,
+        elasticity=row.elasticity,
+        unit_cost=row.unit_cost,
+    )
+    constraints = PriceConstraints(
+        p_min=req.p_min,
+        p_max=req.p_max,
+        min_margin_ratio=req.min_margin_ratio,
+    )
+    return optimize_price(req.week_index, params, constraints)
