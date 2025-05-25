@@ -34,3 +34,21 @@ def _products_for_scenario(db: Session, scenario) -> list[ProductScenario]:
                     unit_cost=row.unit_cost,
                 ),
                 promos=promos,
+            )
+        )
+    return out
+
+
+def create_scenario(db: Session, payload: ScenarioCreate):
+    return scenario_repo.create_scenario(db, payload)
+
+
+def run_simulation(db: Session, scenario_id: str, req: SimulateRequest):
+    scenario = scenario_repo.get_scenario(db, scenario_id)
+    if not scenario:
+        return None
+    products = _products_for_scenario(db, scenario)
+    if not products:
+        raise ValueError("scenario has no valid products")
+
+    if req.mode == "monte_carlo":
