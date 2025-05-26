@@ -34,3 +34,18 @@ def train_model(use_synthetic: bool = True) -> TrainResponse:
         artifact_path=result.artifact_path,
     )
 
+
+@router.post("/{model_id}/predict", response_model=PredictResponse)
+def predict(model_id: str, payload: PredictRequest) -> PredictResponse:
+    path = Path(settings.artifacts_dir) / f"{model_id}.joblib"
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="model not found")
+    if not payload.rows:
+        sample = generate_synthetic_sales(n_rows=1).iloc[0]
+        row = {c: sample[c] for c in FEATURE_COLUMNS}
+        payload.rows = [row]
+    try:
+        preds = predict_units(path, payload.rows)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return PredictResponse(predictions=preds)
