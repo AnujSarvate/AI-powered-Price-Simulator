@@ -28,3 +28,27 @@ def _scenario_read(row) -> ScenarioRead:
     )
 
 
+@router.get("", response_model=list[ScenarioRead])
+def list_scenarios(db: Session = Depends(get_db)) -> list[ScenarioRead]:
+    return [_scenario_read(s) for s in repo.list_scenarios(db)]
+
+
+@router.post("", response_model=ScenarioRead, status_code=201)
+def create_scenario(payload: ScenarioCreate, db: Session = Depends(get_db)) -> ScenarioRead:
+    row = scenario_service.create_scenario(db, payload)
+    return _scenario_read(row)
+
+
+@router.post("/{scenario_id}/simulate", response_model=SimulationRunRead)
+def simulate_scenario(
+    scenario_id: str, payload: SimulateRequest, db: Session = Depends(get_db)
+) -> SimulationRunRead:
+    try:
+        out = scenario_service.run_simulation(db, scenario_id, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not out:
+        raise HTTPException(status_code=404, detail="scenario not found")
+    run, result = out
+    series = {
+        pid: [WeeklyPointRead(**pt) for pt in points]
