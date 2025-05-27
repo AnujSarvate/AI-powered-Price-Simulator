@@ -52,3 +52,21 @@ def simulate_scenario(
     run, result = out
     series = {
         pid: [WeeklyPointRead(**pt) for pt in points]
+        for pid, points in result["series"].items()
+    }
+    return SimulationRunRead(
+        run_id=run.run_id,
+        scenario_id=scenario_id,
+        mode=run.mode,
+        seed=run.seed,
+        total_profit=result["total_profit"],
+        series=series,
+    )
+
+
+@router.get("/runs/{run_id}", response_model=SimulationRunRead)
+def get_run(run_id: str, db: Session = Depends(get_db)) -> SimulationRunRead:
+    run = repo.get_run(db, run_id)
+    if not run:
+        raise HTTPException(status_code=404, detail="run not found")
+    result = run.result
