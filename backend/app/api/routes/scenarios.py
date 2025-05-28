@@ -94,3 +94,7 @@ def optimize(payload: OptimizeRequest, db: Session = Depends(get_db)) -> Optimiz
         raise HTTPException(status_code=404, detail="product not found")
     return OptimizeResponse(
         recommended_price=res.recommended_price,
+        expected_quantity=res.expected_quantity,
+        expected_profit=res.expected_profit,
+        binding_constraints=res.binding_constraints,
+    )
