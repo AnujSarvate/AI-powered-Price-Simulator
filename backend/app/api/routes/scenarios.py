@@ -70,3 +70,27 @@ def get_run(run_id: str, db: Session = Depends(get_db)) -> SimulationRunRead:
     if not run:
         raise HTTPException(status_code=404, detail="run not found")
     result = run.result
+    series = {
+        pid: [WeeklyPointRead(**pt) for pt in points]
+        for pid, points in result["series"].items()
+    }
+    return SimulationRunRead(
+        run_id=run.run_id,
+        scenario_id=run.scenario_id,
+        mode=run.mode,
+        seed=run.seed,
+        total_profit=result["total_profit"],
+        series=series,
+    )
+
+
+@router.post("/optimize", response_model=OptimizeResponse)
+def optimize(payload: OptimizeRequest, db: Session = Depends(get_db)) -> OptimizeResponse:
+    try:
+        res = scenario_service.run_optimize(db, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not res:
+        raise HTTPException(status_code=404, detail="product not found")
+    return OptimizeResponse(
+        recommended_price=res.recommended_price,
