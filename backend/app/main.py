@@ -16,3 +16,9 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.include_router(health.router, prefix="/v1")
+app.include_router(products.router, prefix="/v1")
+app.include_router(scenarios.router, prefix="/v1")
+app.include_router(models_ml.router, prefix="/v1")
