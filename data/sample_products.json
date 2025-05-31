@@ -10,3 +10,11 @@
   },
   {
     "sku": "BEV-001",
+    "name": "Cold Brew",
+    "unit_cost": 1.5,
+    "list_price": 5.5,
+    "category": "beverage",
+    "elasticity": 1.6,
+    "q0": 200
+  }
+]
