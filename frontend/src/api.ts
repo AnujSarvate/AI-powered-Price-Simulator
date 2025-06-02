@@ -28,3 +28,27 @@ export type Product = {
 
 export type SimulationRun = {
   run_id: string;
+  scenario_id: string;
+  mode: string;
+  total_profit: number;
+  series: Record<
+    string,
+    Array<{
+      week_index: number;
+      price: number;
+      quantity: number;
+      gross_profit: number;
+    }>
+  >;
+};
+
+export const api = {
+  health: () => request<{ status: string }>("/v1/health"),
+  listProducts: () => request<Product[]>("/v1/products"),
+  createProduct: (body: Omit<Product, "product_id">) =>
+    request<Product>("/v1/products", { method: "POST", body: JSON.stringify(body) }),
+  createScenario: (body: {
+    name: string;
+    horizon_weeks: number;
+    product_ids: string[];
+  }) => request<{ scenario_id: string }>("/v1/scenarios", { method: "POST", body: JSON.stringify(body) }),
