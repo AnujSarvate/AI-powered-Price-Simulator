@@ -70,3 +70,21 @@ export default function App() {
   async function trainModel() {
     setBusy(true);
     try {
+      const res = await api.trainModel();
+      setStatus(`Model ${res.model_id.slice(0, 8)}… MAE=${res.metrics.mae?.toFixed(2)}`);
+    } catch (e) {
+      setStatus(String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main>
+      <h1>AI-Powered Price Simulator</h1>
+      <p>Elasticity simulation, optimization API, and demand ML training.</p>
+
+      <div className="card row">
+        <button disabled={busy} onClick={seedAndSimulate}>
+          Run 12-week simulation
+        </button>
