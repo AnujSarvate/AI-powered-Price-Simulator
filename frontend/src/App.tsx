@@ -88,3 +88,27 @@ export default function App() {
         <button disabled={busy} onClick={seedAndSimulate}>
           Run 12-week simulation
         </button>
+        <button disabled={busy} onClick={trainModel}>
+          Train demand model
+        </button>
+        <span>{status}</span>
+      </div>
+
+      <div className="card">
+        <h2>Products ({products.length})</h2>
+        <ul>
+          {products.map((p) => (
+            <li key={p.product_id}>
+              {p.name} — ${p.list_price.toFixed(2)} (ε={p.elasticity})
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="card">
+        <h2>Weekly gross profit</h2>
+        <ResponsiveContainer width="100%" height={320}>
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="week" />
+            <YAxis />
