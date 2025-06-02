@@ -112,3 +112,13 @@ export default function App() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="week" />
             <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="profit" stroke="#2563eb" strokeWidth={2} />
+            <Line type="monotone" dataKey="quantity" stroke="#16a34a" strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </main>
+  );
+}
