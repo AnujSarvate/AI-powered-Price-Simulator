@@ -52,3 +52,13 @@ export const api = {
     horizon_weeks: number;
     product_ids: string[];
   }) => request<{ scenario_id: string }>("/v1/scenarios", { method: "POST", body: JSON.stringify(body) }),
+  simulate: (scenarioId: string) =>
+    request<SimulationRun>(`/v1/scenarios/${scenarioId}/simulate`, {
+      method: "POST",
+      body: JSON.stringify({ mode: "deterministic" }),
+    }),
+  trainModel: () =>
+    request<{ model_id: string; metrics: Record<string, number> }>("/v1/models/train", {
+      method: "POST",
+    }),
+};
