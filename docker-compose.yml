@@ -1,0 +1,12 @@
+services:
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite:///./price_simulator.db
+      CORS_ORIGINS: http://localhost:5173
+    volumes:
+      - ./backend:/app
+
+  web:
