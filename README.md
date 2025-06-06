@@ -40,3 +40,27 @@ Details and alternatives are in the scope doc.
 
 ## License
 
+TBD — add before public release.
+
+<!-- dev-milestone:548 -->
+
+<!-- dev-milestone:549 -->
+
+<!-- dev-milestone:550 -->
+
+<!-- dev-milestone:551 -->
+
+<!-- dev-milestone:552 -->
+
+<!-- dev-milestone:553 -->
+
+<!-- dev-milestone:554 -->
+
+<!-- dev-milestone:555 -->
+
+<!-- dev-milestone:556 -->
+
+<!-- dev-milestone:557 -->
+
+<!-- dev-milestone:558 -->
+
