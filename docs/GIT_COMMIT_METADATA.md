@@ -46,3 +46,27 @@ For a research project, record **both** intended backdate and **actual** creatio
 
 ---
 
+## 3. Where to attach metadata
+
+| Mechanism | Pros | Cons |
+|-----------|------|------|
+| **Commit message trailers** (`Key: value` after blank line) | Travels with commit; visible on GitHub | Unstructured unless you standardize; noisy |
+| **`git notes`** | Structured JSON; doesn’t change commit hash of parent tree | Extra ref to push; easy to miss on hosting UI |
+| **Signed commit + signed tag** | Integrity | Doesn’t prove backdate is “true” |
+| **External ledger** (JSONL file in repo, updated each commit) | Easy to query; auditable | Ledger commit itself has a real timestamp unless also backdated |
+| **Rebase / filter-repo rewrite** | Bulk date changes | Rewrites SHAs; destructive on shared branches |
+
+**Recommended for this repo:** combine **trailers** (human-readable summary) + **`git notes`** (full JSON) + **append-only ledger** (`metadata/commits.jsonl`) for tooling.
+
+---
+
+## 4. Metadata schema (v2 — per commit)
+
+Each replayed commit adds **`metadata/records/NNNN.json`** where `NNNN` is the 1-based sequence. The JSON **`title`** and **`description`** match the Git commit subject and body. The commit message also includes trailers:
+
+- `Metadata-Intent`
+- `Metadata-Sequence`
+- `Metadata-Record`
+
+The committed record JSON intentionally omits `commit` (a blob inside commit *C* cannot store *C*'s SHA). Git notes add `"commit": "<sha>"` for linkage.
+
