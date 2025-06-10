@@ -136,3 +136,19 @@ Avoid empty noise commits; each row should map to a real file change when possib
 
 ---
 
+## 7. Limits and ethics (project framing)
+
+| Question | Answer |
+|----------|--------|
+| Can dates be backdated? | Yes, locally and when pushed. |
+| Can metadata be attached per commit? | Yes (notes, trailers, ledger). |
+| Does metadata prove the backdate is historically accurate? | No—only your ledger + signatures + external systems can support audit stories. |
+| Good research questions | Note push ergonomics; graph vs. author date; detecting incoherent backdated series; reproducible manifests. |
+
+---
+
+## 8. References
+
+- `git commit` environment variables: Git documentation (`GIT_AUTHOR_DATE`, `GIT_COMMITTER_DATE`).
+- `git notes add`, `git notes show`, `refs/notes/commits`.
+- Conventional Commit trailers and `git interpret-trailers`.
