@@ -112,3 +112,27 @@ The script:
 Read metadata back:
 
 ```bash
+python tools/commit_with_metadata.py show HEAD
+python tools/commit_with_metadata.py show <sha>
+```
+
+Push notes to origin (when remote exists):
+
+```bash
+git push origin refs/notes/commits
+```
+
+---
+
+## 6. Bulk / scheduled backdating (experiments)
+
+For **research batches** (e.g. simulating a timeline), prefer:
+
+1. Generate a **manifest CSV** (`planned_date`, `message`, `intent`, `files`).
+2. Apply commits **one manifest row at a time** with the tool (keeps metadata consistent).
+3. Never rewrite `main` after push without documenting SHA migration.
+
+Avoid empty noise commits; each row should map to a real file change when possible so history stays analyzable.
+
+---
+
