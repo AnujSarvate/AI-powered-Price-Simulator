@@ -88,3 +88,27 @@ Each logical commit should carry:
 ```
 
 `recorded_at_utc` is wall-clock when the tool ran—useful for research on backdating vs. creation time.
+
+---
+
+## 5. Tooling in this repository
+
+```bash
+python tools/commit_with_metadata.py \
+  --author-date "2025-03-15T14:30:00-05:00" \
+  --message "feat(sim): add constant-elasticity demand" \
+  --intent simulation_kernel_baseline \
+  -- metadata/extra.json \
+  -- path/to/file.py
+```
+
+The script:
+
+1. Stages listed paths (or `--allow-empty`).
+2. Commits with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE`.
+3. Adds a **note** on the new commit SHA with full JSON metadata.
+4. Appends one line to `metadata/commits.jsonl`.
+
+Read metadata back:
+
+```bash
