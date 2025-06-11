@@ -22,3 +22,21 @@ This project delivers a **repeatable simulator** with:
 - Exportable results for reports and presentations.
 
 ---
+
+## 3. Learning objectives (CS project alignment)
+
+| Area | What you demonstrate |
+|------|----------------------|
+| **Algorithms** | Price optimization (grid search / golden section / simple gradient), Monte Carlo for uncertainty, time-series or regression for demand |
+| **Data structures** | Efficient scenario storage, time-indexed sales series, product graph (categories, substitutes) |
+| **Software engineering** | Layered architecture, API design, validation, unit + integration tests |
+| **AI/ML** | Supervised demand model (scikit-learn), train/eval split, feature importance; optional LLM for explanations only |
+| **Systems** | REST API, auth optional, persistence, basic deployment story |
+| **UX** | Dashboard, charts, compare-two-scenarios view |
+
+Adjust depth based on team size (solo vs. 3–4 person team) using the tiered scope in §8.
+
+---
+
+## 4. Core use cases
+
