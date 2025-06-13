@@ -40,3 +40,27 @@ Adjust depth based on team size (solo vs. 3–4 person team) using the tiered sc
 
 ## 4. Core use cases
 
+1. **Define catalog** — Add products with cost, base price, category, and optional competitor reference price.
+2. **Configure market** — Set elasticity, seasonality multiplier, promo windows, and competitor reaction (static or rule-based).
+3. **Run simulation** — For a horizon (e.g. 12 weeks), compute weekly units sold, revenue, profit, and inventory depletion.
+4. **Get AI recommendation** — System suggests a price band that maximizes profit subject to min margin and max price change per week.
+5. **Compare scenarios** — Side-by-side: “current price” vs. “recommended” vs. user custom price.
+6. **Explain (stretch)** — “Why did profit drop in week 6?” → LLM summarizes simulation outputs (no hallucinated numbers; grounded on API data).
+
+---
+
+## 5. Functional requirements
+
+### 5.1 Must have (MVP)
+
+- User can CRUD products (name, unit cost, current price, category).
+- User sets **price elasticity** (ε) per product or category default; demand follows:
+
+  `Q(p) = Q₀ · (p / p₀)^(-ε) · seasonality(t) · promo(t)`
+
+  Document assumptions in the UI tooltip.
+
+- Simulation engine: discrete time steps (weekly), deterministic demand unless “uncertainty mode” enabled.
+- Metrics per run: units, revenue, gross profit, margin %, cumulative profit.
+- Charts: price vs. units, profit over time, scenario comparison (at least 2 series).
+- **ML module (minimal):** Train a regression model on synthetic or CSV historical data `(features → units sold)`; use it to suggest `Q₀` or short-horizon demand adjustment; show MAE/R² on holdout set in an “Model” panel.
