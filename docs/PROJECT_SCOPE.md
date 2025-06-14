@@ -130,3 +130,27 @@ flowchart TB
   REST --> Sim
   REST --> Opt
   REST --> ML
+  Sim --> DB
+  ML --> CSV
+  Opt --> Sim
+```
+
+**Suggested stack (pick one column and stay consistent):**
+
+| Layer | Option A (Python-heavy) | Option B (JS full-stack) |
+|-------|-------------------------|---------------------------|
+| Frontend | React + Vite + Recharts | Same |
+| Backend | FastAPI | Node + Express or Next.js API routes |
+| ML | scikit-learn, pandas | TensorFlow.js or Python microservice |
+| DB | SQLite → Postgres | Same |
+| Optional LLM | OpenAI-compatible API via backend proxy | Same |
+
+**Repository layout (recommended):**
+
+```
+AI-powered-Price-Simulator/
+├── docs/
+│   └── PROJECT_SCOPE.md          # this file
+├── backend/                      # API, simulation, ML
+├── frontend/                     # UI
+├── data/                         # sample CSV, synthetic generator script
