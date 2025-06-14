@@ -154,3 +154,21 @@ AI-powered-Price-Simulator/
 ├── backend/                      # API, simulation, ML
 ├── frontend/                     # UI
 ├── data/                         # sample CSV, synthetic generator script
+├── tests/
+├── README.md
+└── .github/workflows/ci.yml
+```
+
+---
+
+## 8. Tiered delivery plan
+
+### Phase 0 — Foundation (week 1–2)
+
+- Repo setup, CI, README architecture section.
+- Domain models: `Product`, `Scenario`, `SimulationResult`.
+- Pure-function simulation module + golden tests (no UI).
+
+**Exit criteria:** `pytest`/`npm test` green; CLI or script runs one scenario and prints weekly profit.
+
+### Phase 1 — MVP (week 3–5)
