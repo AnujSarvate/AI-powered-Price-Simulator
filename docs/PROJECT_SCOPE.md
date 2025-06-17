@@ -262,3 +262,8 @@ Solo: implement MVP path only; use Phase 2 ML as minimal regression + one chart.
 
 - Live price feeds, A/B test module, multi-store inventory, federated learning on anonymized sales (research angle).
 
+---
+
+## 14. One-line thesis statement (for proposal cover)
+
+*We build an transparent economic simulator for pricing decisions, augmented by machine-learned demand forecasts and constrained optimization, so users can explore profit tradeoffs before changing real prices.*
