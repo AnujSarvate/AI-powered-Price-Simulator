@@ -34,3 +34,27 @@ C4Context
 | `MarketConfig` | embedded in scenario | seasonality_curve, promos[], competitor_rule | promo windows non-overlapping per product |
 | `SimulationRun` | `run_id: UUID` | scenario snapshot, seed, results[] | immutable after `status=completed` |
 | `DemandModel` | `model_id: UUID` | artifact path, metrics, feature_schema_version | trained only on server |
+
+### 2.2 Value objects
+
+```python
+# Canonical types (Python); mirror in TypeScript via OpenAPI codegen
+
+@dataclass(frozen=True)
+class Money:
+    amount: Decimal  # quantized to 4 dp internally, 2 dp in API JSON
+
+@dataclass(frozen=True)
+class WeeklyPoint:
+    week_index: int  # 0-based
+    price: Money
+    quantity: float
+    revenue: Money
+    gross_profit: Money
+    margin_ratio: float  # (price - cost) / price
+```
+
+---
+
+## 3. Demand and simulation kernel
+
