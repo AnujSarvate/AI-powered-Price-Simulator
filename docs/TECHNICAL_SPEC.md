@@ -166,3 +166,27 @@ Subject to:
 
 ```
 CSV upload or synthetic generator
+  -> schema validation (pandera)
+  -> train/test split (time-based, last 20% weeks)
+  -> Pipeline: ColumnTransformer + StandardScaler + Ridge | RandomForestRegressor
+  -> cross_val on train (TimeSeriesSplit, n_splits=5)
+  -> persist with joblib + metadata JSON (features, metrics, git hash)
+```
+
+**Serving:** `POST /v1/models/{id}/predict` with batch rows; latency target p95 < 50 ms for 100 rows.
+
+### 5.3 Evaluation protocol
+
+| Metric | Baseline A (mean) | Baseline B (elasticity only) | Model |
+|--------|-------------------|------------------------------|-------|
+| MAE | ✓ | ✓ | ✓ |
+| RMSE | ✓ | ✓ | ✓ |
+| MAPE | ✓ | ✓ | ✓ |
+| R² | ✓ | ✓ | ✓ |
+
+Store results in `DemandModel.metrics` for UI display.
+
+### 5.4 Integration with simulator
+
+Hybrid mode (default):
+
