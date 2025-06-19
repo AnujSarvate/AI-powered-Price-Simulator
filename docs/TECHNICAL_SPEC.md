@@ -124,3 +124,27 @@ p^* = c \cdot \frac{\varepsilon}{\varepsilon - 1}
 
 ### 4.2 Constrained optimization (production path)
 
+Problem per product:
+
+\[
+\max_{p \in [p_{\min}, p_{\max}]} \ (p - c) \cdot Q(p)
+\]
+
+Subject to:
+
+- `margin_ratio(p) ≥ m_min`
+- `|p - p_{t-1}| ≤ Δ_max` (dynamic pricing path)
+
+**Algorithm:**
+
+1. If no dynamic constraint and closed form valid → use \(p^*\), clip to `[p_min, p_max]`.
+2. Else **golden-section search** on log-price axis (unimodal assumption documented) or **uniform grid** 200 steps if promo kinks break unimodality.
+3. Multi-product: sequential per product (document as greedy) or small joint grid for P ≤ 3.
+
+**API:** `POST /v1/optimize` returns `{ recommended_price, expected_profit, binding_constraints[] }`.
+
+---
+
+## 5. Machine learning pipeline
+
+### 5.1 Problem formulation
