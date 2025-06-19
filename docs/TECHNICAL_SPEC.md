@@ -100,3 +100,27 @@ OUTPUT: SimulationResult { series: Dict[product_id, List[WeeklyPoint]], aggregat
 ### 3.4 Stochastic mode
 
 Monte Carlo with `N` draws (`N` default 500, cap 5000):
+
+- Sample \(\varepsilon \sim \mathcal{N}(\hat\varepsilon, \sigma_\varepsilon)\), truncate at `ε_min`.
+- Sample multiplicative shock \(\eta \sim \text{LogNormal}(0, \sigma_\eta)\) on \(Q_0\).
+
+Report per-week **p10 / p50 / p90** profit across draws. Seed-controlled for reproducibility.
+
+---
+
+## 4. Optimization subsystem
+
+### 4.1 Single-product static optimum (unconstrained)
+
+Maximize \(\pi(p) = (p - c) \cdot Q_0 (p/p_0)^{-\varepsilon}\).
+
+Closed form for \(\varepsilon > 1\):
+
+\[
+p^* = c \cdot \frac{\varepsilon}{\varepsilon - 1}
+\]
+
+(Validate against numeric optimizer in tests.)
+
+### 4.2 Constrained optimization (production path)
+
