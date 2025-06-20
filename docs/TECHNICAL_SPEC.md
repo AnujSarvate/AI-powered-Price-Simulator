@@ -214,3 +214,21 @@ Auth: `Bearer` JWT (optional MVP: API key header for single tenant).
 | POST | `/models/train` | multipart CSV or `{ use_synthetic: true, n_rows }` |
 | GET | `/models/{id}` | Metadata + metrics |
 | POST | `/models/{id}/predict` | Batch inference |
+| POST | `/explain` | Optional LLM; body: `{ run_id }` → cached narrative |
+
+**Error envelope:**
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "human readable",
+    "details": [{ "field": "elasticity", "issue": "must be > 0" }]
+  }
+}
+```
+
+**Idempotency:** `POST /simulate` accepts `Idempotency-Key` header; duplicate returns same `run_id` if payload hash matches within 24h.
+
+---
+
