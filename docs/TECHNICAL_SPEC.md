@@ -256,3 +256,27 @@ CREATE TABLE scenarios (
   market_config JSONB NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE TABLE simulation_runs (
+  run_id UUID PRIMARY KEY,
+  scenario_id UUID NOT NULL REFERENCES scenarios(scenario_id),
+  scenario_snapshot JSONB NOT NULL,
+  mode TEXT NOT NULL,
+  seed BIGINT,
+  status TEXT NOT NULL,
+  result JSONB,
+  started_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ
+);
+
+CREATE INDEX idx_runs_scenario ON simulation_runs(scenario_id, completed_at DESC);
+```
+
+Migrations: **Alembic**; SQLite for local dev with same DDL (adjusted types).
+
+---
+
+## 8. Frontend architecture
+
+- **State:** TanStack Query for server cache; URL query params for active `scenario_id` / `run_id`.
+- **Charts:** Recharts; downsample series > 500 points for render (LTTB algorithm).
