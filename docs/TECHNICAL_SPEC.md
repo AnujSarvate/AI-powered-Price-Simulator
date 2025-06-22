@@ -364,3 +364,27 @@ Internet -> Caddy/NGINX (TLS)
          -> postgres:5432
          -> volume /models for joblib artifacts
 ```
+
+Environment variables: `DATABASE_URL`, `JWT_SECRET`, `LLM_API_KEY` (optional), `CORS_ORIGINS`.
+
+---
+
+## 15. Versioning and compatibility
+
+- API version in path `/v1`; breaking changes → `/v2`.
+- `market_config` JSON includes `"schema_version": 1`; migrations upgrade on read.
+- Simulation results include `engine_version` string for reproducibility audits.
+
+---
+
+## 16. Open questions
+
+1. Inventory replenishment lead time in v1 or v2?
+2. JWT multi-user vs single shared demo tenant for class submission?
+3. Export format: Parquet for large Monte Carlo outputs?
+
+---
+
+## Appendix A — Reference implementation order
+
+1. `core/demand.py`, `core/simulation.py` + tests  
