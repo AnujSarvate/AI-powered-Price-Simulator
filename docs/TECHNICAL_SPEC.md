@@ -322,3 +322,21 @@ Performance budget: LCP < 2.5s on 3G Fast for dashboard shell (code-split model 
 flowchart LR
   api[api.routes]
   svc[services.scenario_service]
+  sim[core.simulation]
+  opt[core.optimizer]
+  ml[ml.pipeline]
+  repo[repositories]
+
+  api --> svc
+  svc --> sim
+  svc --> opt
+  svc --> ml
+  svc --> repo
+  opt --> sim
+  ml --> sim
+```
+
+**Rule:** `core.*` must not import from `api` or `repositories` (hexagonal / ports-adapters).
+
+---
+
