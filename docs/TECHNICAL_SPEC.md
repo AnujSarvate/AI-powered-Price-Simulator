@@ -388,3 +388,10 @@ Environment variables: `DATABASE_URL`, `JWT_SECRET`, `LLM_API_KEY` (optional), `
 ## Appendix A — Reference implementation order
 
 1. `core/demand.py`, `core/simulation.py` + tests  
+2. `core/optimizer.py` + tests  
+3. `repositories` + Alembic  
+4. FastAPI routes simulate/optimize  
+5. ML pipeline + train endpoint  
+6. React scenario editor + charts  
+7. CI + Docker Compose  
+8. Optional LLM explain route  
