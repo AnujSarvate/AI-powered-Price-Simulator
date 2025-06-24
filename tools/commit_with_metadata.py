@@ -28,3 +28,27 @@ SCHEMA_VERSION = 1
 def repo_root() -> Path:
     out = subprocess.check_output(
         ["git", "rev-parse", "--show-toplevel"],
+        text=True,
+    ).strip()
+    return Path(out)
+
+
+def run_git(
+    args: list[str],
+    *,
+    env: dict[str, str] | None = None,
+    cwd: Path | None = None,
+) -> subprocess.CompletedProcess[str]:
+    merged = os.environ.copy()
+    if env:
+        merged.update(env)
+    return subprocess.run(
+        ["git", *args],
+        cwd=cwd,
+        env=merged,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+
