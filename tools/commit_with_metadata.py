@@ -118,3 +118,21 @@ def stage_and_commit(
         cwd=root,
         text=True,
     ).strip()
+    return sha
+
+
+def attach_note(root: Path, sha: str, metadata: dict[str, Any]) -> None:
+    payload = json.dumps(metadata, separators=(",", ":"), sort_keys=True)
+    r = run_git(["notes", "add", "-f", "-m", payload, sha], cwd=root)
+    if r.returncode != 0:
+        raise RuntimeError(f"git notes failed: {r.stderr or r.stdout}")
+
+
+def append_ledger(root: Path, sha: str, metadata: dict[str, Any]) -> None:
+    ledger = root / LEDGER_PATH
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    row = {"commit": sha, **metadata}
+    with ledger.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row, sort_keys=True) + "\n")
+
+
