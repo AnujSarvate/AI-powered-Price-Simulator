@@ -160,3 +160,27 @@ def cmd_commit(args: argparse.Namespace) -> int:
         committer_date=committer_date,
         allow_empty=args.allow_empty,
     )
+    attach_note(root, sha, metadata)
+    append_ledger(root, sha, metadata)
+
+    print(sha)
+    if args.print_metadata:
+        print(json.dumps(metadata, indent=2))
+    return 0
+
+
+def cmd_show(args: argparse.Namespace) -> int:
+    root = repo_root()
+    rev = args.rev or "HEAD"
+    r = run_git(["notes", "show", rev], cwd=root)
+    if r.returncode != 0:
+        print(r.stderr or r.stdout, file=sys.stderr)
+        return 1
+    try:
+        data = json.loads(r.stdout.strip())
+        print(json.dumps(data, indent=2))
+    except json.JSONDecodeError:
+        print(r.stdout)
+    return 0
+
+
