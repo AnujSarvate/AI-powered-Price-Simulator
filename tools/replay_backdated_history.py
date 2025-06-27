@@ -22,3 +22,27 @@ import subprocess
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SNAPSHOT = ROOT / ".history_snapshot"
+RECORDS_DIR = "metadata/records"
+LEDGER = ROOT / "metadata" / "commits.jsonl"
+TOOL_VERSION = "0.2.0"
+PATCH_MAX_LINES = 6
+
+SKIP_TOP = {".git", ".history_snapshot"}
+
+SKIP_DIRS = {
+    ".git",
+    ".history_snapshot",
+    "node_modules",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "artifacts",
+    "htmlcov",
+    ".pytest_cache",
+    "metadata/records",
+}
+SKIP_FILES = {".DS_Store"}
+SKIP_CAPTURE_PREFIXES = (
