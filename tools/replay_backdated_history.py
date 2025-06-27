@@ -46,3 +46,27 @@ SKIP_DIRS = {
 }
 SKIP_FILES = {".DS_Store"}
 SKIP_CAPTURE_PREFIXES = (
+    "metadata/commits.jsonl",
+    "metadata/records/",
+    "CHANGELOG_DEV.md",
+)
+
+
+@dataclass
+class PlannedCommit:
+    when: datetime
+    title: str
+    description: str
+    intent: str
+    paths: list[str]
+    sequence: int
+    record_path: str
+    allow_empty: bool = False
+
+
+def run(cmd: list[str], *, env: dict[str, str] | None = None, check: bool = True) -> subprocess.CompletedProcess[str]:
+    merged = os.environ.copy()
+    if env:
+        merged.update(env)
+    proc = subprocess.run(
+        cmd,
