@@ -70,3 +70,21 @@ def run(cmd: list[str], *, env: dict[str, str] | None = None, check: bool = True
         merged.update(env)
     proc = subprocess.run(
         cmd,
+        cwd=ROOT,
+        env=merged,
+        text=True,
+        capture_output=True,
+    )
+    if check and proc.returncode != 0:
+        raise RuntimeError((proc.stderr or proc.stdout or "").strip())
+    return proc
+
+
+def capture_snapshot() -> dict[str, str]:
+    files: dict[str, str] = {}
+    for path in ROOT.rglob("*"):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(ROOT).as_posix()
+        if rel.startswith(SKIP_CAPTURE_PREFIXES):
+            continue
