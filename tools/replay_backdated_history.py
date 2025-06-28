@@ -112,3 +112,27 @@ def write_snapshot(files: dict[str, str]) -> None:
 
 def file_priority(rel: str) -> tuple[int, str]:
     order = [
+        "README.md",
+        "docs/",
+        "metadata/schema",
+        "tools/commit_with_metadata.py",
+        "tools/",
+        "backend/requirements.txt",
+        "backend/app/core/",
+        "backend/app/ml/",
+        "backend/app/db/",
+        "backend/app/schemas/",
+        "backend/app/repositories/",
+        "backend/app/services/",
+        "backend/app/api/",
+        "backend/app/main.py",
+        "backend/tests/",
+        "data/",
+        "frontend/",
+        "docker-compose.yml",
+        ".gitignore",
+    ]
+    for idx, prefix in enumerate(order):
+        if rel == prefix or rel.startswith(prefix):
+            return idx, rel
+    return len(order), rel
