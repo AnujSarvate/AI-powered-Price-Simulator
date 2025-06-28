@@ -178,3 +178,21 @@ def describe_change(rel: str, content: str, suffix: str) -> tuple[str, str, str]
     base = rel.split("/")[-1]
     part_note = f" ({suffix.strip()})" if suffix.strip() else ""
     slug = rel.replace("/", "-").replace(".", "-")
+
+    if rel.startswith("backend/tests/"):
+        title = f"test: cover {base}{part_note}"
+        description = f"Add or extend tests in {rel} for pricing simulation behavior."
+        intent = f"test/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("docs/"):
+        title = f"docs: document {base}{part_note}"
+        description = f"Write project documentation in {rel}{part_note}."
+        intent = f"docs/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("backend/app/core/"):
+        title = f"feat(core): implement {base}{part_note}"
+        description = f"Implement simulation or optimization logic in {rel}{part_note}."
+        intent = f"core/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("backend/app/ml/"):
+        title = f"feat(ml): implement {base}{part_note}"
+        description = f"Add demand forecasting or training code in {rel}{part_note}."
+        intent = f"ml/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("backend/app/api/"):
