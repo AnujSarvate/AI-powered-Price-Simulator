@@ -136,3 +136,21 @@ def file_priority(rel: str) -> tuple[int, str]:
         if rel == prefix or rel.startswith(prefix):
             return idx, rel
     return len(order), rel
+
+
+def build_patch_queue(files: dict[str, str], *, max_lines: int) -> list[tuple[str, str, str]]:
+    ordered = sorted(files.keys(), key=file_priority)
+    queue: list[tuple[str, str, str]] = []
+    for rel in ordered:
+        content = files[rel]
+        lines = content.splitlines(keepends=True)
+        if len(lines) <= max_lines:
+            queue.append((rel, content, ""))
+            continue
+        total_parts = (len(lines) + max_lines - 1) // max_lines
+        for part in range(1, total_parts + 1):
+            end = min(part * max_lines, len(lines))
+            cumulative = "".join(lines[:end])
+            suffix = f" part {part}/{total_parts}"
+            queue.append((rel, cumulative, suffix))
+    return queue
