@@ -220,3 +220,27 @@ def describe_change(rel: str, content: str, suffix: str) -> tuple[str, str, str]
         description = f"Introduce or extend {rel}{part_note} for the price simulator."
         intent = f"build/{slug}{suffix.replace(' ', '')}"
 
+    lines = content.count("\n") + (1 if content and not content.endswith("\n") else 0)
+    description += f" ({lines} lines in file snapshot after this commit.)"
+    return title, description, intent
+
+
+def generate_schedule(
+    start: date,
+    end: date,
+    *,
+    seed: int,
+    min_per_day: int = 1,
+    max_per_day: int = 5,
+) -> list[datetime]:
+    rng = random.Random(seed)
+    slots: list[datetime] = []
+    day = start
+    while day <= end:
+        n = rng.randint(min_per_day, max_per_day)
+        for _ in range(n):
+            slots.append(
+                datetime(
+                    day.year,
+                    day.month,
+                    day.day,
