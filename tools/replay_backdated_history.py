@@ -196,3 +196,27 @@ def describe_change(rel: str, content: str, suffix: str) -> tuple[str, str, str]
         description = f"Add demand forecasting or training code in {rel}{part_note}."
         intent = f"ml/{slug}{suffix.replace(' ', '')}"
     elif rel.startswith("backend/app/api/"):
+        title = f"feat(api): expose {base}{part_note}"
+        description = f"Add REST route handlers in {rel}{part_note}."
+        intent = f"api/{slug}{suffix.replace(' ', '')}"
+    elif rel.startswith("frontend/"):
+        title = f"feat(ui): update {base}{part_note}"
+        description = f"Build dashboard or client integration in {rel}{part_note}."
+        intent = f"ui/{slug}{suffix.replace(' ', '')}"
+    elif rel == "README.md":
+        title = f"docs: update README{part_note}"
+        description = f"Document setup and project overview{part_note}."
+        intent = f"readme{suffix.replace(' ', '')}"
+    elif rel == ".gitignore":
+        title = "chore: define gitignore"
+        description = "Ignore virtualenv, build artifacts, and local databases."
+        intent = "chore/gitignore"
+    elif "docker" in rel.lower():
+        title = f"chore: container config for {base}"
+        description = f"Add Docker or compose configuration in {rel}."
+        intent = f"docker/{slug}"
+    else:
+        title = f"feat: add {rel}{part_note}"
+        description = f"Introduce or extend {rel}{part_note} for the price simulator."
+        intent = f"build/{slug}{suffix.replace(' ', '')}"
+
