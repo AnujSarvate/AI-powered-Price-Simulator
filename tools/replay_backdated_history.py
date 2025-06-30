@@ -328,3 +328,27 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
     record_dest = ROOT / plan.record_path
     record_dest.parent.mkdir(parents=True, exist_ok=True)
     record_dest.write_text(json.dumps(pre_meta, indent=2) + "\n", encoding="utf-8")
+
+    run(["git", "add", "--"] + plan.paths)
+
+    cmd = [
+        "git",
+        "commit",
+        "-m",
+        plan.title,
+        "-m",
+        plan.description,
+        "-m",
+        f"Metadata-Intent: {plan.intent}",
+        "-m",
+        f"Metadata-Sequence: {plan.sequence}",
+        "-m",
+        f"Metadata-Record: {plan.record_path}",
+    ]
+    if plan.allow_empty:
+        cmd.insert(2, "--allow-empty")
+
+    run(cmd, env=env)
+    sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+
+    file_meta = {**pre_meta, "paths": plan.paths}
