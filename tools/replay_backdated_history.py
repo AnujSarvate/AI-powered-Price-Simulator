@@ -286,3 +286,27 @@ def plan_commits(files: dict[str, str], slots: list[datetime]) -> list[tuple[Pla
 
 
 def iso_git(dt: datetime) -> str:
+    return dt.isoformat()
+
+
+def attach_metadata(sha: str, meta: dict) -> None:
+    payload = json.dumps(meta, separators=(",", ":"), sort_keys=True)
+    run(["git", "notes", "add", "-f", "-m", payload, sha])
+
+
+def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
+    for rel, text in contents.items():
+        dest = ROOT / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(text, encoding="utf-8")
+
+    author = os.environ.get("GIT_AUTHOR_NAME", "Price Simulator Dev")
+    email = os.environ.get("GIT_AUTHOR_EMAIL", "dev@price-simulator.local")
+    env = {
+        "GIT_AUTHOR_DATE": iso_git(plan.when),
+        "GIT_COMMITTER_DATE": iso_git(plan.when),
+        "GIT_AUTHOR_NAME": author,
+        "GIT_COMMITTER_NAME": os.environ.get("GIT_COMMITTER_NAME", author),
+        "GIT_AUTHOR_EMAIL": email,
+        "GIT_COMMITTER_EMAIL": os.environ.get("GIT_COMMITTER_EMAIL", email),
+    }
