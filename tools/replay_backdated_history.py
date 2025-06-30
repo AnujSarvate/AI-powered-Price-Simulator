@@ -262,3 +262,27 @@ def plan_commits(files: dict[str, str], slots: list[datetime]) -> list[tuple[Pla
     readme = files.get("README.md", "# AI-Powered Price Simulator\n")
     while len(patches) < len(slots):
         n = len(patches) + 1
+        readme += f"\n<!-- dev-milestone:{n} -->\n"
+        patches.append(("README.md", readme, f" milestone {n}"))
+
+    if len(patches) > len(slots):
+        patches = patches[: len(slots)]
+
+    out: list[tuple[PlannedCommit, dict[str, str]]] = []
+    for seq, (when, (rel, chunk, suffix)) in enumerate(zip(slots, patches, strict=True), start=1):
+        title, description, intent = describe_change(rel, chunk, suffix)
+        record_path = f"{RECORDS_DIR}/{seq:04d}.json"
+        pc = PlannedCommit(
+            when=when,
+            title=title,
+            description=description,
+            intent=intent,
+            paths=[rel, record_path],
+            sequence=seq,
+            record_path=record_path,
+        )
+        out.append((pc, {rel: chunk}))
+    return out
+
+
+def iso_git(dt: datetime) -> str:
