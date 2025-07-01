@@ -352,3 +352,27 @@ def apply_plan(plan: PlannedCommit, contents: dict[str, str]) -> str:
     sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
 
     file_meta = {**pre_meta, "paths": plan.paths}
+    record_dest.write_text(json.dumps(file_meta, indent=2) + "\n", encoding="utf-8")
+    run(["git", "add", plan.record_path])
+    run(["git", "commit", "--amend", "--no-edit"], env=env)
+    sha = run(["git", "rev-parse", "HEAD"]).stdout.strip()
+
+    note_meta = {**file_meta, "commit": sha}
+    attach_metadata(sha, note_meta)
+
+    LEDGER.parent.mkdir(parents=True, exist_ok=True)
+    with LEDGER.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(note_meta, sort_keys=True) + "\n")
+
+    return sha
+
+
+def apply_history(dry_run: bool = False) -> None:
+    files = capture_snapshot()
+    write_snapshot(files)
+
+    slots = generate_schedule(date(2025, 1, 1), date(2025, 6, 30), seed=42)
+    planned = plan_commits(files, slots)
+
+    if dry_run:
+        print(f"Would create {len(planned)} commits ({len(slots)} slots)")
