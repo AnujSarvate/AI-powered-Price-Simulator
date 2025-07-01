@@ -376,3 +376,21 @@ def apply_history(dry_run: bool = False) -> None:
 
     if dry_run:
         print(f"Would create {len(planned)} commits ({len(slots)} slots)")
+        print(f"Raw patches: {len(build_patch_queue(files, max_lines=PATCH_MAX_LINES))}")
+        print(f"Sample title: {planned[0][0].title}")
+        return
+
+    for path in list(ROOT.iterdir()):
+        if path.name in SKIP_TOP:
+            continue
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
+
+    run(["git", "checkout", "--orphan", "main-replay"], check=False)
+    run(["git", "rm", "-rf", "."], check=False)
+    run(["git", "branch", "-M", "main"], check=False)
+
+    records_dir = ROOT / RECORDS_DIR
+    if records_dir.exists():
