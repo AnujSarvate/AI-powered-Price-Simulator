@@ -52,3 +52,6 @@ def demand_qty(
 
 
 def margin_ratio(price: float, unit_cost: float) -> float:
+    if price <= 0:
+        raise ValueError("price must be positive")
+    return (price - unit_cost) / price
