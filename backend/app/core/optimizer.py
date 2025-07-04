@@ -76,3 +76,15 @@ def optimize_price(
 
     if best_profit == float("-inf"):
         raise ValueError("no feasible price under constraints")
+
+    if abs(best_p - constraints.p_min) < 1e-9:
+        binding.append("p_min")
+    if abs(best_p - constraints.p_max) < 1e-9:
+        binding.append("p_max")
+
+    return OptimizeResult(
+        recommended_price=best_p,
+        expected_quantity=best_q,
+        expected_profit=best_profit,
+        binding_constraints=binding,
+    )
