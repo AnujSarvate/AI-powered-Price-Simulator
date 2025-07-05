@@ -52,3 +52,27 @@ def simulate_deterministic(
     horizon_weeks: int,
     *,
     seed: int | None = None,
+) -> SimulationResult:
+    if horizon_weeks < 1:
+        raise ValueError("horizon_weeks must be >= 1")
+
+    series: dict[str, list[WeeklyPoint]] = {}
+    total_profit = 0.0
+
+    for prod in products:
+        points: list[WeeklyPoint] = []
+        for t in range(horizon_weeks):
+            if prod.price_path and t < len(prod.price_path):
+                price = prod.price_path[t]
+            else:
+                price = prod.params.p0
+            promo = _promo_active(prod.promos, t)
+            qty = demand_qty(price, t, prod.params, promo_active=promo)
+            revenue = price * qty
+            profit = (price - prod.params.unit_cost) * qty
+            margin = (price - prod.params.unit_cost) / price if price else 0.0
+            points.append(
+                WeeklyPoint(
+                    week_index=t,
+                    price=price,
+                    quantity=qty,
