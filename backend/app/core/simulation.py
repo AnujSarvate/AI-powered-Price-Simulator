@@ -34,3 +34,21 @@ class WeeklyPoint:
     gross_profit: float
     margin_ratio: float
 
+
+@dataclass
+class SimulationResult:
+    mode: Literal["deterministic", "monte_carlo"]
+    seed: int | None
+    series: dict[str, list[WeeklyPoint]]
+    total_profit: float
+
+
+def _promo_active(promos: list[PromoWindow], week: int) -> bool:
+    return any(p.active and p.start_week <= week <= p.end_week for p in promos)
+
+
+def simulate_deterministic(
+    products: list[ProductScenario],
+    horizon_weeks: int,
+    *,
+    seed: int | None = None,
