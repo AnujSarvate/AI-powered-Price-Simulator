@@ -100,3 +100,21 @@ def simulate_monte_carlo(
     seed: int = 42,
     elasticity_sigma: float = 0.05,
     q0_sigma: float = 0.08,
+) -> SimulationResult:
+    rng = random.Random(seed)
+    profits: list[float] = []
+
+    for _ in range(n_draws):
+        drawn: list[ProductScenario] = []
+        for p in products:
+            eps = max(0.05, rng.gauss(p.params.elasticity, elasticity_sigma))
+            q0 = max(0.01, rng.gauss(p.params.q0, q0_sigma * p.params.q0))
+            drawn.append(
+                ProductScenario(
+                    product_id=p.product_id,
+                    name=p.name,
+                    params=DemandParams(
+                        q0=q0,
+                        p0=p.params.p0,
+                        elasticity=eps,
+                        unit_cost=p.params.unit_cost,
