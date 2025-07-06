@@ -118,3 +118,18 @@ def simulate_monte_carlo(
                         p0=p.params.p0,
                         elasticity=eps,
                         unit_cost=p.params.unit_cost,
+                    ),
+                    price_path=p.price_path,
+                    promos=p.promos,
+                )
+            )
+        res = simulate_deterministic(drawn, horizon_weeks)
+        profits.append(res.total_profit)
+
+    profits.sort()
+    median_profit = profits[len(profits) // 2]
+    base = simulate_deterministic(products, horizon_weeks, seed=seed)
+    base.total_profit = median_profit
+    base.mode = "monte_carlo"
+    base.seed = seed
+    return base
