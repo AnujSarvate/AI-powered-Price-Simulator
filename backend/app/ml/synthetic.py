@@ -34,3 +34,13 @@ def generate_synthetic_sales(
             {
                 "log_price": math.log(price),
                 "week_of_year": week,
+                "promo_active": promo,
+                "competitor_price_ratio": competitor_ratio,
+                f"category_{categories[0]}": 1 if category == categories[0] else 0,
+                f"category_{categories[1]}": 1 if category == categories[1] else 0,
+                f"category_{categories[2]}": 1 if category == categories[2] else 0,
+                "units_sold": max(0.5, units),
+            }
+        )
+
+    return pd.DataFrame(rows)
