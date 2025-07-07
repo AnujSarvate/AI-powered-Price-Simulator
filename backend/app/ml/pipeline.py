@@ -82,3 +82,10 @@ def train_demand_model(
     return TrainResult(model_id=model_id, metrics=metrics, artifact_path=str(artifact))
 
 
+def predict_units(model_path: Path, rows: list[dict]) -> list[float]:
+    pipe = joblib.load(model_path)
+    df = pd.DataFrame(rows)
+    for col in FEATURE_COLUMNS:
+        if col not in df.columns:
+            raise ValueError(f"missing feature column: {col}")
+    return [float(x) for x in pipe.predict(df[FEATURE_COLUMNS])]
