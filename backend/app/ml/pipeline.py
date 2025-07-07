@@ -16,3 +16,27 @@ from sklearn.pipeline import Pipeline
 
 from app.ml.synthetic import generate_synthetic_sales
 
+FEATURE_COLUMNS = [
+    "log_price",
+    "week_of_year",
+    "promo_active",
+    "competitor_price_ratio",
+    "category_beverage",
+    "category_merch",
+    "category_snack",
+]
+
+
+@dataclass
+class TrainResult:
+    model_id: str
+    metrics: dict[str, float]
+    artifact_path: str
+
+
+def _baseline_mae(y_test: pd.Series) -> float:
+    pred = [float(y_test.mean())] * len(y_test)
+    return float(mean_absolute_error(y_test, pred))
+
+
+def train_demand_model(
