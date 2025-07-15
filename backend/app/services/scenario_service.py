@@ -28,3 +28,21 @@ def _products_for_scenario(db: Session, scenario) -> list[ProductScenario]:
                 product_id=row.product_id,
                 name=row.name,
                 params=DemandParams(
+                    q0=row.q0,
+                    p0=row.list_price,
+                    elasticity=row.elasticity,
+                    unit_cost=row.unit_cost,
+                ),
+                promos=promos,
+            )
+        )
+    return out
+
+
+def create_scenario(db: Session, payload: ScenarioCreate):
+    return scenario_repo.create_scenario(db, payload)
+
+
+def run_simulation(db: Session, scenario_id: str, req: SimulateRequest):
+    scenario = scenario_repo.get_scenario(db, scenario_id)
+    if not scenario:
