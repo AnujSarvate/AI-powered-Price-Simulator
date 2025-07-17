@@ -22,3 +22,27 @@ def _scenario_read(row) -> ScenarioRead:
     return ScenarioRead(
         scenario_id=row.scenario_id,
         name=row.name,
+        horizon_weeks=row.horizon_weeks,
+        market_config=cfg,
+        product_ids=cfg.get("product_ids") or [],
+    )
+
+
+@router.get("", response_model=list[ScenarioRead])
+def list_scenarios(db: Session = Depends(get_db)) -> list[ScenarioRead]:
+    return [_scenario_read(s) for s in repo.list_scenarios(db)]
+
+
+@router.post("", response_model=ScenarioRead, status_code=201)
+def create_scenario(payload: ScenarioCreate, db: Session = Depends(get_db)) -> ScenarioRead:
+    row = scenario_service.create_scenario(db, payload)
+    return _scenario_read(row)
+
+
+@router.post("/{scenario_id}/simulate", response_model=SimulationRunRead)
+def simulate_scenario(
+    scenario_id: str, payload: SimulateRequest, db: Session = Depends(get_db)
+) -> SimulationRunRead:
+    try:
+        out = scenario_service.run_simulation(db, scenario_id, payload)
+    except ValueError as exc:
