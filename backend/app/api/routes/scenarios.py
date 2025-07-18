@@ -88,3 +88,13 @@ def get_run(run_id: str, db: Session = Depends(get_db)) -> SimulationRunRead:
 def optimize(payload: OptimizeRequest, db: Session = Depends(get_db)) -> OptimizeResponse:
     try:
         res = scenario_service.run_optimize(db, payload)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not res:
+        raise HTTPException(status_code=404, detail="product not found")
+    return OptimizeResponse(
+        recommended_price=res.recommended_price,
+        expected_quantity=res.expected_quantity,
+        expected_profit=res.expected_profit,
+        binding_constraints=res.binding_constraints,
+    )
