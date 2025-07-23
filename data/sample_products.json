@@ -4,3 +4,17 @@
     "name": "Coffee Mug",
     "unit_cost": 4.0,
     "list_price": 12.0,
+    "category": "merch",
+    "elasticity": 1.2,
+    "q0": 80
+  },
+  {
+    "sku": "BEV-001",
+    "name": "Cold Brew",
+    "unit_cost": 1.5,
+    "list_price": 5.5,
+    "category": "beverage",
+    "elasticity": 1.6,
+    "q0": 200
+  }
+]
