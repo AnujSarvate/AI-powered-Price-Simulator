@@ -64,3 +64,21 @@ export default function App() {
       setStatus(String(e));
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function trainModel() {
+    setBusy(true);
+    try {
+      const res = await api.trainModel();
+      setStatus(`Model ${res.model_id.slice(0, 8)}… MAE=${res.metrics.mae?.toFixed(2)}`);
+    } catch (e) {
+      setStatus(String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main>
+      <h1>AI-Powered Price Simulator</h1>
