@@ -22,3 +22,27 @@ export type Product = {
   unit_cost: number;
   list_price: number;
   category: string;
+  elasticity: number;
+  q0: number;
+};
+
+export type SimulationRun = {
+  run_id: string;
+  scenario_id: string;
+  mode: string;
+  total_profit: number;
+  series: Record<
+    string,
+    Array<{
+      week_index: number;
+      price: number;
+      quantity: number;
+      gross_profit: number;
+    }>
+  >;
+};
+
+export const api = {
+  health: () => request<{ status: string }>("/v1/health"),
+  listProducts: () => request<Product[]>("/v1/products"),
+  createProduct: (body: Omit<Product, "product_id">) =>
