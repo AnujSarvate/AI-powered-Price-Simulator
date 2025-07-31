@@ -10,3 +10,4 @@ class Settings(BaseSettings):
     app_version: str = "0.1.0"
 
 
+settings = Settings()
